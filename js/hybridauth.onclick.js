@@ -5,6 +5,10 @@
 
   Drupal.behaviors.hybridauth_onclick = {};
   Drupal.behaviors.hybridauth_onclick.attach = function(context, settings) {
+    $('.hybridauth-widget-provider', context).each(function() {
+      // $(this).attr('href', $(this).attr('data-hybridauth-url'));
+      this.href = $(this).attr('data-hybridauth-url');
+    });
     $('.hybridauth-onclick-current:not(.hybridauth-onclick-processed)', context).addClass('hybridauth-onclick-processed').bind('click', function() {
       $(this).parents('.hybridauth-widget').after('<div>' + Drupal.t('Contacting @title...', {'@title': this.title}) + '</div>');
     });

@@ -149,6 +149,13 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#description' => t('Determines the order of the elements on the form - heavier elements get positioned later.'),
     '#default_value' => variable_get('hybridauth_widget_weight', 100),
   );
+  $form['vtabs']['fset_widget']['hybridauth_widget_hide_links'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide links'),
+    '#description' => t('Remove href property from authentication provider links.'),
+    '#default_value' => variable_get('hybridauth_widget_hide_links', 0),
+  );
+
 
   $form['vtabs']['fset_account'] = array(
     '#type' => 'fieldset',

@@ -33,6 +33,7 @@ function hybridauth_uninstall() {
   variable_del('hybridauth_widget_link_title');
   variable_del('hybridauth_widget_icon_pack');
   variable_del('hybridauth_widget_weight');
+  variable_del('hybridauth_widget_hide_links');
   variable_del('hybridauth_disable_username_change');
   variable_del('hybridauth_remove_password_fields');
   variable_del('hybridauth_pictures');

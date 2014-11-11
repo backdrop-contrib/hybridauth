@@ -96,7 +96,6 @@ function template_preprocess_hybridauth_widget(&$vars, $hook) {
       $url = url($path, array('query' => $query_mod));
       if ($element['#hybridauth_widget_hide_links']) {
         $path = 'user';
-        $query_mod = array();
       }
       $options = array(
         'html' => TRUE,

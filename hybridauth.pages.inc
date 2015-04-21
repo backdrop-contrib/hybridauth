@@ -279,6 +279,12 @@ function _hybridauth_window_process_auth($data) {
         return $additional_info;
       }
 
+      // As we have already checked for the additional info we can unset the plaintext $data['pass'] here.
+      if (isset($data['pass'])) {
+        $user_password = $data['pass'];
+        unset($data['pass']);
+      }
+
       // TODO: remove this global if possible.
       global $_hybridauth_data;
       $_hybridauth_data = $data;
@@ -286,7 +292,7 @@ function _hybridauth_window_process_auth($data) {
       $name = _hybridauth_make_username($data);
       $userinfo = array(
         'name' => $name,
-        'pass' => empty($data['pass']) ? user_password() : $data['pass'],
+        'pass' => empty($user_password) ? user_password() : $user_password,
         'init' => $name,
         'status' => 1,
         'access' => REQUEST_TIME,

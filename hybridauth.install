@@ -280,9 +280,15 @@ function hybridauth_update_7004(&$sandbox) {
 }
 
 /**
- * Remove users passwords stored in plaintext from hybridauth_identity DB table.
+ * Failed update, moved to hybridauth_update_7006().
  */
 function hybridauth_update_7005(&$sandbox) {
+}
+
+/**
+ * Remove users passwords stored in plaintext from hybridauth_identity DB table.
+ */
+function hybridauth_update_7006(&$sandbox) {
   // Calculate the total number of HybridAuth identities.
   if (!isset($sandbox['total'])) {
     $sandbox['total'] = db_select('hybridauth_identity', 'ha_id')
@@ -311,7 +317,7 @@ function hybridauth_update_7005(&$sandbox) {
     $data = unserialize($identity['data']);
     if (isset($data['pass'])) {
       unset($data['pass']);
-      _hybridauth_identity_save($data, $identity->uid);
+      _hybridauth_identity_save($data, $identity['uid']);
     }
     $sandbox['current']++;
   }

@@ -288,7 +288,7 @@ function hybridauth_element_info() {
     '#hybridauth_widget_icon_pack' => variable_get('hybridauth_widget_icon_pack', 'hybridauth_32'),
     '#hybridauth_widget_hide_links' => variable_get('hybridauth_widget_hide_links', 0),
     '#hybridauth_destination' => variable_get('hybridauth_destination', ''),
-    //'#hybridauth_destination_error' => '',
+    '#hybridauth_destination_error' => variable_get('hybridauth_destination_error', ''),
     '#hybridauth_query' => array(),
     '#hybridauth_onclick' => '',
     '#attached' => array(

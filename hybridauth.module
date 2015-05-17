@@ -803,6 +803,10 @@ function _hybridauth_make_username($data) {
     $hybridauth_name = $desired_name = trim($data['username']);
   }
 
+  if (empty($hybridauth_name)) {
+    $hybridauth_name = $desired_name = 'hybridauth_user';
+  }
+
   $counter = 0;
   while (user_load_by_name($hybridauth_name)) {
     $counter++;

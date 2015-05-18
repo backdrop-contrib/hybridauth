@@ -12,8 +12,8 @@ $plugin = array(
 );
 
 function hybridauth_provider_disqus_configuration_form_callback(&$form, $provider_id) {
-  unset($form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_id']);
-  $form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_key']['#title'] = t('API Key (Public Key)');
+  unset($form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_key']);
+  $form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_id']['#title'] = t('API Key (Public Key)');
   $form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_secret']['#title'] = t('API Secret (Secret Key)');
 
   $form['vtabs']['application']['#description'] = t('<p>Enter your application key and secret. You can get these by creating a new application at <a href="!apps_uri">!apps_uri</a>.</p>'

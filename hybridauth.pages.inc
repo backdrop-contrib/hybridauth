@@ -457,7 +457,7 @@ function hybridauth_additional_info_form($form, &$form_state, $data) {
       '#maxlength' => USERNAME_MAX_LENGTH,
       '#required' => TRUE,
       '#attributes' => array('class' => array('username')),
-      '#default_value' => _hybridauth_make_username($data),
+      '#default_value' => _hybridauth_make_username($data, TRUE),
       '#description' => t('Choose your username.') . ' '
         . t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, apostrophes, and underscores.'),
     );

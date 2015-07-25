@@ -293,7 +293,7 @@ function _hybridauth_window_process_auth($data) {
       $userinfo = array(
         'name' => $name,
         'pass' => empty($user_password) ? user_password() : $user_password,
-        'init' => $name,
+        'init' => $data['email'],
         'status' => 1,
         'access' => REQUEST_TIME,
         'mail' => $data['email'],

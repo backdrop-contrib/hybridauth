@@ -560,7 +560,10 @@ function hybridauth_additional_info_form_submit($form, &$form_state) {
       $data['manual'][] = 'pass';
     }
   }
-  $data['manual'] = implode(',', $data['manual']);
+
+  if (isset($data['manual']) && is_array($data['manual'])) {
+    $data['manual'] = implode(',', $data['manual']);
+  }
 
   _hybridauth_window_process_auth($data);
 }

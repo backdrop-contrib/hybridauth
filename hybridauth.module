@@ -1032,7 +1032,7 @@ function _hybridauth_invoke_hooks($hook, $account, $data) {
  */
 function _hybridauth_language_default() {
   global $language;
-  $language_default = $language;
+  $language_default = clone $language;
   $language_default->prefix = '';
   return $language_default;
 }

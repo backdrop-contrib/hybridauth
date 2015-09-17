@@ -393,10 +393,8 @@ function hybridauth_user_view($account, $view_mode, $langcode) {
 
   $header = array(t('Authentication provider'), t('Identity'));
   $rows = array();
-  $data_array = array();
   foreach ($identities as $identity) {
     $data = unserialize($identity['data']);
-    $data_array[] = $data;
     $profile_link = '';
     if (!empty($data['profileURL'])) {
       $profile_link = l($data['profileURL'], $data['profileURL'], array('attributes' => array('target' => '_blank'), 'external' => TRUE));

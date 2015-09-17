@@ -439,7 +439,6 @@ function _hybridauth_window_render_form($form, $provider_id) {
 }
 
 function hybridauth_additional_info_form($form, &$form_state, $data) {
-  $form = array();
   $form['data'] = array(
     '#type' => 'value',
     '#value' => $data,
@@ -569,8 +568,6 @@ function hybridauth_additional_info_form_submit($form, &$form_state) {
 }
 
 function hybridauth_openid_form($form, &$form_state) {
-  $form = array();
-
   $form['openid_identifier'] = array(
     '#type' => 'textfield',
     '#title' => t('OpenID Identity'),

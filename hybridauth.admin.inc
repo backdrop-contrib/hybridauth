@@ -36,11 +36,13 @@ function hybridauth_admin_settings($form, &$form_state) {
   );
   $options = array();
   $weight = -50;
-  $providers = hybridauth_providers_list();
+  // Clear the providers cache here to get any new ones.
+  $providers = hybridauth_providers_list(TRUE);
   $enabled_providers = array_filter(variable_get('hybridauth_providers', array()));
+  $available_providers = hybridauth_providers_files();
   $form['vtabs']['fset_providers']['hybridauth_providers'] = array();
   foreach (array_keys($enabled_providers + $providers) as $provider_id) {
-    $available = array_key_exists($provider_id, hybridauth_providers_files());
+    $available = array_key_exists($provider_id, $available_providers);
     $options[$provider_id] = array(
       'name' => $providers[$provider_id],
       'icon' => theme('hybridauth_provider_icon', array('provider_id' => $provider_id, 'icon_pack' => 'hybridauth_16')),

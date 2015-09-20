@@ -493,7 +493,7 @@ function hybridauth_robotstxt() {
 /**
  * Internal functions.
  */
-function hybridauth_providers_list() {
+function hybridauth_providers_list($reset = FALSE) {
   $providers = &drupal_static(__FUNCTION__, NULL);
 
   if (!isset($providers)) {
@@ -536,7 +536,7 @@ function hybridauth_providers_list() {
       'Vkontakte' => t('VKontakte'),
       'Yandex' => t('Yandex'),
     );
-    foreach (hybridauth_providers_files() as $name => $file) {
+    foreach (hybridauth_providers_files($reset) as $name => $file) {
       if (!array_key_exists($name, $raw_providers)) {
         $raw_providers[$name] = t($name);
       }
@@ -555,12 +555,18 @@ function hybridauth_providers_list() {
 /**
  * Returns available providers files, keyed by filename without extension.
  */
-function hybridauth_providers_files() {
-  $cache = cache_get('hybridauth_providers_files');
-  if (!empty($cache->data)) {
-    $files = $cache->data;
+function hybridauth_providers_files($reset = FALSE) {
+  $files = array();
+  // Try to get cached value if allowed: $reset == FALSE.
+  if (!$reset) {
+    $cache = cache_get('hybridauth_providers_files');
+    if (!empty($cache->data)) {
+      $files = $cache->data;
+    }
   }
-  else {
+
+  // Scan Providers directory if $reset == TRUE or there was no cached value.
+  if (empty($files)) {
     $files = file_scan_directory(_hybridauth_library_path() . '/Hybrid/Providers', '/\.php$/', array('key' => 'name'));
     cache_set('hybridauth_providers_files', $files, 'cache', CACHE_TEMPORARY);
   }

@@ -94,7 +94,7 @@ function _hybridauth_window_close($redirect = TRUE) {
 
   $destination = drupal_get_destination();
   $destination = token_replace($destination['destination'], array('user' => $user), array('clear' => TRUE));
-  $destination_error = $_GET['destination_error'];
+  $destination_error = !empty($_GET['destination_error']) ? $_GET['destination_error'] : variable_get('hybridauth_destination_error', '');
 
   $destination_options = drupal_parse_url($destination) + array('absolute' => TRUE);
   $destination_error_options = drupal_parse_url($destination_error) + array('absolute' => TRUE);

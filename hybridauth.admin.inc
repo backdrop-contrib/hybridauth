@@ -369,7 +369,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Proxy'),
     '#default_value' => variable_get('hybridauth_proxy', NULL),
-    '#description' => t('The HTTP proxy to tunnel requests through. For example <b>1.2.3.4:8080</b>.'),
+    '#description' => t('The HTTP proxy to tunnel requests through. For example <strong>1.2.3.4:8080</strong>.'),
   );
   $form['vtabs']['fset_other']['hybridauth_debug'] = array(
     '#type' => 'checkbox',

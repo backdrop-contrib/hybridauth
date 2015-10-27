@@ -365,6 +365,12 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#description' => t('Select how to handle duplicate email addresses. '
       . 'This situation occurs when the same user is trying to authenticate using different authentication providers, but with the same email address.'),
   );
+  $form['vtabs']['fset_other']['hybridauth_proxy'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Proxy'),
+    '#default_value' => variable_get('hybridauth_proxy', NULL),
+    '#description' => t('The HTTP proxy to tunnel requests through. For example <b>1.2.3.4:8080</b>.'),
+  );
   $form['vtabs']['fset_other']['hybridauth_debug'] = array(
     '#type' => 'checkbox',
     '#title' => t('Debug mode'),

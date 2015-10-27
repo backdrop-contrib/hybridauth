@@ -724,6 +724,10 @@ function hybridauth_get_config() {
       'debug_file' => $logfile,
     );
 
+    if ($proxy = variable_get('hybridauth_proxy', NULL)) {
+      $config['proxy'] = $proxy;
+    }
+
     foreach (hybridauth_get_enabled_providers() as $provider_id => $provider_name) {
       if ($provider_config = hybridauth_get_provider_config($provider_id)) {
         $config['providers'][$provider_id] = $provider_config;

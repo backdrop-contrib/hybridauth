@@ -10,6 +10,11 @@ function hybridauth_endpoint() {
 
   if ($lib_path = _hybridauth_library_path()) {
     try {
+      // If Composer install was executed in the Hybridauth library use that
+      // autoloader.
+      if (file_exists($lib_path . '/../vendor/autoload.php')) {
+        require_once $lib_path . '/../vendor/autoload.php';
+      }
       require_once $lib_path . '/index.php';
     }
     catch(Exception $e) {

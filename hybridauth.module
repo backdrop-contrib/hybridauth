@@ -688,7 +688,14 @@ function hybridauth_get_instance() {
     $controller = FALSE;
 
     if ($lib_path = _hybridauth_library_path()) {
-      require_once $lib_path . '/Hybrid/Auth.php';
+      // If Composer install was executed in the Hybridauth library use that
+      // autoloader.
+      if (file_exists($lib_path . '/../vendor/autoload.php')) {
+        require_once $lib_path . '/../vendor/autoload.php';
+      }
+      else {
+        require_once $lib_path . '/Hybrid/Auth.php';
+      }
       $config = hybridauth_get_config();
       try {
         $controller = new Hybrid_Auth($config);

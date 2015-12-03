@@ -181,6 +181,7 @@ function hybridauth_user_login(&$edit, $account) {
         }
         // Call Hybrid_Auth::restoreSessionData() to set stored data.
         $hybridauth->restoreSessionData($hybridauth_session_data);
+        _hybridauth_session_save($hybridauth_session_data, $account->uid);
       }
     }
   }

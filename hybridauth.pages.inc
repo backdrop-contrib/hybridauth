@@ -144,7 +144,7 @@ function _hybridauth_window_auth($hybridauth, $provider_id) {
   else {
     $error_code = $hybridauth;
   }
-  
+
   if (!is_null($error_code)) {
     // Destroy the session started in hybridauth_window_start() if user is not
     // logged in.
@@ -385,7 +385,13 @@ function _hybridauth_window_process_auth($data) {
     }
     // Visitors can't register accounts through HybridAuth.
     elseif (variable_get('hybridauth_register', 0) == 3) {
-      drupal_set_message(t('New account registration is not allowed.'), 'error');
+      if (variable_get('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)) {
+        $message = t('Sorry, you are not allowed to login. Please, <a href="@register">create a new account</a>.', array('@register' => url('user/register')));
+      }
+      else {
+        $message = t('New account registration is not allowed.');
+      }
+      drupal_set_message($message, 'error');
       _hybridauth_window_close(FALSE);
     }
     // Only admin can create accounts.
@@ -705,7 +711,7 @@ function hybridauth_user_identity_delete($form, &$form_state, $account, $id) {
   if (!$del_identity || $account->uid != $del_identity['uid']) {
     drupal_set_message(t('You are trying to delete non-existing identity.'), 'error');
     drupal_access_denied();
-    // See https://drupal.org/node/2020351 and 
+    // See https://drupal.org/node/2020351 and
     // https://api.drupal.org/api/drupal/includes%21common.inc/function/drupal_access_denied/7
     drupal_exit();
   }

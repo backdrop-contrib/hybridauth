@@ -321,13 +321,14 @@ function hybridauth_widget_pre_render($element) {
   $query = $element['#hybridauth_query'];
   $element['#hybridauth_destination'] = trim($element['#hybridauth_destination']);
   $element['#hybridauth_destination_error'] = trim($element['#hybridauth_destination_error']);
-  $destination = drupal_get_destination();
   // Process destination; HTTP_REFERER is needed for widget in modals
   // to return to the current page.
   foreach (array('destination', 'destination_error') as $key) {
     if ($element['#hybridauth_' . $key] == '[HTTP_REFERER]' && isset($_SERVER['HTTP_REFERER'])) {
+      // We need to make this link relative, see https://www.drupal.org/node/2616284.
+      global $base_root;
       $query += array(
-        $key => $_SERVER['HTTP_REFERER'],
+        $key => str_replace($base_root . '/', '', $_SERVER['HTTP_REFERER']),
       );
     }
     elseif ($element['#hybridauth_' . $key]) {
@@ -336,6 +337,7 @@ function hybridauth_widget_pre_render($element) {
       );
     }
     else {
+      $destination = drupal_get_destination();
       $query += array(
         $key => $destination['destination'],
       );

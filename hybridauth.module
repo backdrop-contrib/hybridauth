@@ -316,7 +316,10 @@ function hybridauth_element_info() {
  * Pre-render callback for the 'hybridauth_widget' element.
  */
 function hybridauth_widget_pre_render($element) {
-  $element['#theme'] = 'hybridauth_widget';
+  // Default theme function.
+  if (empty($element['#theme'])) {
+    $element['#theme'] = 'hybridauth_widget';
+  }
 
   $query = $element['#hybridauth_query'];
   $element['#hybridauth_destination'] = trim($element['#hybridauth_destination']);

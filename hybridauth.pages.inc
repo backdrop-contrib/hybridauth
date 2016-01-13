@@ -115,6 +115,12 @@ function _hybridauth_window_close($redirect = TRUE) {
     )
   ), 'setting');
   drupal_add_js(drupal_get_path('module', 'hybridauth') . '/js/hybridauth.close.js');
+
+  // Make sure that we send the correct content type with charset, otherwise
+  // Firefox might repeat the GET request.
+  // @see https://www.drupal.org/node/2648912
+  drupal_add_http_header('Content-Type', 'text/html; charset=utf-8');
+
   $page = element_info('page');
   // Don't show messages on this closing page, show them later.
   $page['#show_messages'] = FALSE;

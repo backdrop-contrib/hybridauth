@@ -34,9 +34,6 @@ function template_preprocess_hybridauth_provider_icon(&$vars, $hook) {
   }
   // Provider modifications.
   if ($provider = hybridauth_get_provider($vars['provider_id'])) {
-    if (array_key_exists('css', $provider)) {
-      drupal_add_css($provider['path'] . '/' . $provider['css']);
-    }
     if ($function = ctools_plugin_get_function($provider, 'icon_classes_callback')) {
       $function($icon_pack_classes);
     }

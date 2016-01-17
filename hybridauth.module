@@ -496,7 +496,7 @@ function hybridauth_widget_pre_render($element) {
       break;
   }
 
-  _hybridauth_add_icon_pack_files($element['#hybridauth_widget_icon_pack']);
+  _hybridauth_add_icon_pack_files($element['#hybridauth_widget_icon_pack'], $element);
   return $element;
 }
 
@@ -986,19 +986,18 @@ function _hybridauth_library_path() {
   return $library_path;
 }
 
-function _hybridauth_add_icon_pack_files($name) {
+function _hybridauth_add_icon_pack_files($name, &$element) {
   $done = &drupal_static(__FUNCTION__, NULL);
   if (!isset($done[$name])) {
     $done[$name] = TRUE;
     $icon_pack = hybridauth_get_icon_pack($name);
-    if (!empty($icon_pack['css'])) {
-      drupal_add_css($icon_pack['path'] . '/' . $icon_pack['css']);
-    }
-    if (!empty($icon_pack['js'])) {
-      drupal_add_js($icon_pack['path'] . '/' . $icon_pack['js']);
+    foreach (array('css', 'js') as $key) {
+      if (!empty($icon_pack[$key])) {
+        $element['#attached'][$key][] = $icon_pack['path'] . '/' . $icon_pack[$key];
+      }
     }
     if ($function = ctools_plugin_get_function($icon_pack, 'initialize_callback')) {
-      $function();
+      $function($element);
     }
   }
 }

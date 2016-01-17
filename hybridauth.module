@@ -465,7 +465,10 @@ function hybridauth_widget_pre_render($element) {
             )), */
           ),
         );
-        drupal_add_js($settings, 'setting');
+        $element['#attached']['js'][] = array(
+          'data' => $settings,
+          'type' => 'setting',
+        );
       }
 
       $text = $element['#hybridauth_widget_link_text'];

@@ -612,7 +612,7 @@ function hybridauth_openid_form_submit($form, &$form_state) {
 /**
  * Menu callback; manage HybridAuth identities for the specified user.
  */
-function hybridauth_user_identity($form, &$form_state, $account) {
+function hybridauth_user_identity($account) {
   global $user;
   drupal_set_title(format_username($account));
 
@@ -632,9 +632,8 @@ function hybridauth_user_identity($form, &$form_state, $account) {
     );
   }
 
-  $form = array();
-
-  $form['identity'] = array(
+  $build = array();
+  $build['identity'] = array(
     '#theme' => 'table',
     '#header' => $header,
     '#rows' => $rows,
@@ -644,7 +643,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
 
   // Add more identities.
   if ($account->uid == $user->uid && user_access('use hybridauth')) {
-    $form['hybridauth_widget'] = array(
+    $build['hybridauth_widget'] = array(
       '#type' => 'hybridauth_widget',
       '#title' => t('Add more identities'),
       '#weight' => 10,
@@ -656,7 +655,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
 
   if (variable_get('hybridauth_debug', 0)) {
     $connected_providers = hybridauth_get_connected_providers();
-    $form['connected_providers'] = array(
+    $build['connected_providers'] = array(
       '#markup' => t('Currently connected to (session data):') . ' ' . implode(', ', $connected_providers),
       '#weight' => 15,
     );
@@ -664,7 +663,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
 
   // Tokens browser for admins.
   if (user_access('administer site configuration') || user_access('administer users')) {
-    $form['vtabs'] = array(
+    $build['vtabs'] = array(
       '#type' => 'vertical_tabs',
       '#weight' => 20,
     );
@@ -672,7 +671,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
     $header = array(t('Token'), t('Value'));
     // User tokens.
     if (!empty($account->data['hybridauth'])) {
-      $form['vtabs']['fset_user_tokens'] = array(
+      $build['vtabs']['fset_user_tokens'] = array(
         '#type' => 'fieldset',
         '#title' => t('User tokens'),
       );
@@ -681,7 +680,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
       foreach ($account->data['hybridauth'] as $key => $value) {
         $rows[] = array('[user:hybridauth:' . $key . ']', $value);
       }
-      $form['vtabs']['fset_user_tokens']['tokens'] = array(
+      $build['vtabs']['fset_user_tokens']['tokens'] = array(
         '#theme' => 'table',
         '#header' => $header,
         '#rows' => $rows,
@@ -691,7 +690,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
 
     // Data from auth providers.
     foreach ($data_array as $data) {
-      $form['vtabs']['fset_' . $data['provider'] . '_' . $data['identifier']] = array(
+      $build['vtabs']['fset_' . $data['provider'] . '_' . $data['identifier']] = array(
         '#type' => 'fieldset',
         '#title' => $providers[$data['provider']],
       );
@@ -700,7 +699,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
       foreach ($data as $key => $value) {
         $rows[] = array($key, $value);
       }
-      $form['vtabs']['fset_' . $data['provider'] . '_' . $data['identifier']]['tokens'] = array(
+      $build['vtabs']['fset_' . $data['provider'] . '_' . $data['identifier']]['tokens'] = array(
         '#theme' => 'table',
         '#header' => $header,
         '#rows' => $rows,
@@ -709,7 +708,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
     }
   }
 
-  return $form;
+  return $build;
 }
 
 function hybridauth_user_identity_delete($form, &$form_state, $account, $id) {

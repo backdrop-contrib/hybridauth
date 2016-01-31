@@ -560,12 +560,12 @@ function hybridauth_report() {
     );
   }
 
-  $form = array();
-  $form['report'] = array(
+  $build = array();
+  $build['report'] = array(
     '#theme' => 'table',
     '#header' => $header,
     '#rows' => $rows,
     '#empty' => t('There are no HybridAuth identities yet.'),
   );
-  return $form;
+  return $build;
 }

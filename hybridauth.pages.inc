@@ -155,7 +155,16 @@ function _hybridauth_window_auth($hybridauth, $provider_id) {
     // Destroy the session started in hybridauth_window_start() if user is not
     // logged in.
     if (!user_is_logged_in()) {
-      session_destroy();
+      // Delete session only if it contains just HybridAuth data.
+      $delete_session = TRUE;
+      foreach ($_SESSION as $key => $value) {
+        if (substr($key, 0, 4) != 'HA::') {
+          $delete_session = FALSE;
+        }
+      }
+      if ($delete_session) {
+        session_destroy();
+      }
     }
     switch ($error_code) {
       case 5:

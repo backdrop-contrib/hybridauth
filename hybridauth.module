@@ -324,9 +324,11 @@ function hybridauth_widget_pre_render($element) {
   foreach (array('destination', 'destination_error') as $key) {
     if ($element['#hybridauth_' . $key] == '[HTTP_REFERER]' && isset($_SERVER['HTTP_REFERER'])) {
       // We need to make this link relative, see https://www.drupal.org/node/2616284.
-      global $base_root;
+      global $base_root, $base_path;
+      $path = str_replace($base_root . $base_path, '', $_SERVER['HTTP_REFERER']);
+      list(, $path) = language_url_split_prefix($path, language_list());
       $query += array(
-        $key => str_replace($base_root . '/', '', $_SERVER['HTTP_REFERER']),
+        $key => $path,
       );
     }
     elseif ($element['#hybridauth_' . $key]) {

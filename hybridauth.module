@@ -1251,3 +1251,14 @@ function _hybridauth_language_default() {
   $language_default->prefix = '';
   return $language_default;
 }
+
+/**
+ * Helper function to check if the string is allowed for token replacements.
+ */
+function _hybridauth_allow_token_replace($string) {
+  if ($string == variable_get('hybridauth_destination', '')) {
+    return TRUE;
+  }
+  // TODO: add hook so that other modules can provide strings for token replacements.
+  return FALSE;
+}

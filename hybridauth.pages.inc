@@ -98,11 +98,21 @@ function _hybridauth_window_close($redirect = TRUE) {
   $GLOBALS['devel_shutdown'] = FALSE;
 
   $destination = drupal_get_destination();
-  $destination = token_replace($destination['destination'], array('user' => $user), array('clear' => TRUE));
+  $destination = $destination['destination'];
+  // Check if token replacements are allowed for the destination string.
+  if (_hybridauth_allow_token_replace($destination)) {
+    $destination = token_replace($destination, array('user' => $user), array('clear' => TRUE));
+  }
   $destination_error = !empty($_GET['destination_error']) ? $_GET['destination_error'] : variable_get('hybridauth_destination_error', '');
 
-  $destination_options = drupal_parse_url($destination) + array('absolute' => TRUE);
-  $destination_error_options = drupal_parse_url($destination_error) + array('absolute' => TRUE);
+  $base_options = array(
+    'absolute' => TRUE,
+    // The redirect target must never be an external URL to prevent open
+    // redirect vulnerabilities.
+    'external' => FALSE,
+  );
+  $destination_options = drupal_parse_url($destination) + $base_options;
+  $destination_error_options = drupal_parse_url($destination_error) + $base_options;
 
   $destination = url($destination_options['path'], $destination_options);
   $destination_error = url($destination_error_options['path'], $destination_error_options);

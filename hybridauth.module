@@ -710,6 +710,7 @@ function hybridauth_providers_list($reset = FALSE) {
       'Geni' => t('Geni'),
       'GitHub' => t('GitHub'),
       'Goodreads' => t('Goodreads'),
+      'HumanitarianId' => t('Humanitarian ID'),
       'Identica' => t('Identica'),
       'Instagram' => t('Instagram'),
       'LastFM' => t('LastFM'),

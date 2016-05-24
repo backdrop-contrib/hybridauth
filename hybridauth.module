@@ -1037,7 +1037,14 @@ function _hybridauth_make_username($data, $allow_empty = FALSE) {
   }
 
   if (!empty($hybridauth_name)) {
-    $counter = 0;
+    // Find the initial counter value.
+    $query = db_select('users', 'u')
+      ->condition('u.name', db_like($desired_name) . '%', 'LIKE');
+    $query->addExpression('COUNT(1)');
+    $counter = $query->execute()->fetchField();
+    $hybridauth_name = $desired_name . ' ' . $counter;
+
+    // Check that the username is unique.
     while (user_load_by_name($hybridauth_name)) {
       $counter++;
       $hybridauth_name = $desired_name . ' ' . $counter;

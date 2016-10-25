@@ -83,6 +83,9 @@
 .hybridauth-odnoklassniki-hybridauth-32 {
   background: transparent url(icons/odnoklassniki.png) 0px 0px no-repeat;
 }
+.hybridauth-pinterest-hybridauth-32 {
+  background: transparent url(icons/pinterest.png) 0px 0px no-repeat;
+}
 .hybridauth-pixnet-hybridauth-32 {
   background: transparent url(icons/pixnet.png) 0px 0px no-repeat;
 }
@@ -121,9 +124,6 @@
 }
 .hybridauth-yandex-hybridauth-32 {
   background: transparent url(icons/yandex.png) 0px 0px no-repeat;
-}
-.hybridauth-pinterest-hybridauth-32 {
-  background: transparent url(icons/pinterest.png) 0px 0px no-repeat;
 }
 /* Last used provider */
 .hybridauth-last-provider .hybridauth-icon-hybridauth-32 {

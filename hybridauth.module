@@ -894,6 +894,12 @@ function hybridauth_get_config() {
       'debug_file' => $logfile,
     );
 
+    // Special case Facebook: we need to provide a language-aware base URL
+    // because otherwise there is a redirect_uri mismatch in the Facebook SDK.
+    if ($_GET['q'] === 'hybridauth/window/Facebook') {
+      $config['base_url'] = url('hybridauth/endpoint', array('absolute' => TRUE));
+    }
+
     if ($proxy = variable_get('hybridauth_proxy', NULL)) {
       $config['proxy'] = $proxy;
     }

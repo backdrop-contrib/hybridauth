@@ -54,12 +54,18 @@ function hybridauth_provider_facebook_configuration_form_callback(&$form, $provi
     '#required' => TRUE,
     '#maxlength' => 512,
   );
+  $form['vtabs']['advanced']['hybridauth_provider_' . $provider_id . '_trustForwarded'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Trust X-Forwarded-* headers'),
+    '#default_value' => variable_get('hybridauth_provider_' . $provider_id . '_trustForwarded', FALSE),
+  );
 }
 
 function hybridauth_provider_facebook_configuration_callback(&$config, $provider_id) {
   if (empty($config['scope'])) {
     $config['scope'] = hybridauth_provider_facebook_scope_default();
   }
+  $config['trustForwarded'] = variable_get('hybridauth_provider_' . $provider_id . '_trustForwarded', FALSE);
 }
 
 function hybridauth_provider_facebook_scope_default() {

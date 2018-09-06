@@ -378,7 +378,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Debug mode'),
     '#description' => t('When in debug mode, extra error information will be logged/displayed. This should be disabled when not in development.'),
-    '#default_value' => variable_get('hybridauth_debug', 0),
+    '#default_value' => variable_get('hybridauth_debug', FALSE),
   );
 
   return system_settings_form($form);
@@ -425,6 +425,9 @@ function hybridauth_admin_settings_validate($form, &$form_state) {
   foreach (array_keys($providers_weights) as $provider_id) {
     $values['hybridauth_providers'][$provider_id] = $providers_values[$provider_id];
   }
+
+  // Cast hybridauth_debug to boolean.
+  $values['hybridauth_debug'] = empty($values['hybridauth_debug']) ? FALSE : TRUE;
 }
 
 /**

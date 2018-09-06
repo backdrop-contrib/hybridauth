@@ -677,7 +677,7 @@ function hybridauth_user_identity($account) {
     );
   }
 
-  if (variable_get('hybridauth_debug', 0)) {
+  if (variable_get('hybridauth_debug', FALSE)) {
     $connected_providers = hybridauth_get_connected_providers();
     $build['connected_providers'] = array(
       '#markup' => t('Currently connected to (session data):') . ' ' . implode(', ', $connected_providers),

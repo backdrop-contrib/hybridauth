@@ -884,10 +884,10 @@ function hybridauth_get_config() {
 
   if (!isset($config)) {
     $logfile = file_directory_temp() . '/hybridauth.debug.log';
-    $hybridauth_debug = variable_get('hybridauth_debug', 0);
+    $hybridauth_debug = variable_get('hybridauth_debug', FALSE);
     if ($hybridauth_debug && file_put_contents($logfile, PHP_EOL . 'HYBRIDAUTH DEBUG LOG START' . PHP_EOL . PHP_EOL, FILE_APPEND) === FALSE) {
       watchdog('hybridauth', 'Failed to write to debug log file @logfile.', array('@logfile' => $logfile), WATCHDOG_ERROR);
-      $hybridauth_debug = 0;
+      $hybridauth_debug = FALSE;
     }
 
     $config = array(

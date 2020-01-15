@@ -40,12 +40,14 @@ function hybridauth_admin_settings($form, &$form_state) {
   $weight = -50;
   // Clear the providers cache here to get any new ones.
   $providers = hybridauth_providers_list(TRUE);
-  $enabled_providers = array_filter($config->get('hybridauth_providers'));
+  //TODO
+  //$enabled_providers = array_filter($config->get('hybridauth_providers'));
+  $enabled_providers = array_filter(array());
   $available_providers = hybridauth_providers_files();
   $form['vtabs']['fset_providers']['hybridauth_providers'] = array();
   // $icon_pack = variable_get('hybridauth_widget_icon_pack', 'hybridauth_32');
   $icon_pack = 'hybridauth_16';
-  _hybridauth_add_icon_pack_files($icon_pack, $form);
+  //_hybridauth_add_icon_pack_files($icon_pack, $form);
   foreach (array_keys($enabled_providers + $providers) as $provider_id) {
     $available = array_key_exists($provider_id, $available_providers);
     $options[$provider_id] = array(
@@ -527,7 +529,8 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
   ) + $base;
 
   if ($provider = hybridauth_get_provider($provider_id)) {
-    if ($function = ctools_plugin_get_function($provider, 'configuration_form_callback')) {
+    //CTOOLS TODO
+    if (0 && $function = ctools_plugin_get_function($provider, 'configuration_form_callback')) {
       $function($form, $provider_id);
     }
   }

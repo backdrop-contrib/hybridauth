@@ -28,14 +28,14 @@ function template_preprocess_hybridauth_provider_icon(&$vars, $hook) {
     backdrop_html_class('hybridauth-' . $vars['provider_id'] . '-' . $vars['icon_pack']),
   );
 
-  ctools_include('plugins');
+  //ctools_include('plugins');
   // Icon pack modifications.
-  if ($function = ctools_plugin_load_function('hybridauth', 'icon_pack', $vars['icon_pack'], 'icon_classes_callback')) {
+  if (0 && $function = ctools_plugin_load_function('hybridauth', 'icon_pack', $vars['icon_pack'], 'icon_classes_callback')) {
     $function($icon_pack_classes, $vars['provider_id']);
   }
   // Provider modifications.
   if ($provider = hybridauth_get_provider($vars['provider_id'])) {
-    if ($function = ctools_plugin_get_function($provider, 'icon_classes_callback')) {
+    if (0 && $function = ctools_plugin_get_function($provider, 'icon_classes_callback')) {
       $function($icon_pack_classes);
     }
   }

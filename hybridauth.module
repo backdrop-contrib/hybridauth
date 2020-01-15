@@ -455,8 +455,8 @@ function hybridauth_widget_pre_render($element) {
       $class = array();
       if ($element['#hybridauth_widget_use_overlay']) {
         $class = array('ctools-use-modal', 'ctools-modal-hybridauthmodal');
-        ctools_include('modal');
-        ctools_modal_add_js();
+        //ctools_include('modal');
+        //ctools_modal_add_js();
         $settings = array(
           'hybridauthmodal' => array(
             'modalSize' => array(
@@ -663,24 +663,24 @@ function hybridauth_ctools_plugin_directory($module, $type) {
  * Load metadata for a single icon pack without loading all icon packs.
  */
 function hybridauth_get_icon_pack($name) {
-  ctools_include('plugins');
-  return ctools_get_plugins('hybridauth', 'icon_pack', $name);
+  //ctools_include('plugins');
+  //return ctools_get_plugins('hybridauth', 'icon_pack', $name);
 }
 
 /**
  * Load metadata for all icon packs.
  */
 function hybridauth_get_icon_packs() {
-  ctools_include('plugins');
-  return ctools_get_plugins('hybridauth', 'icon_pack');
+  //ctools_include('plugins');
+  //return ctools_get_plugins('hybridauth', 'icon_pack');
 }
 
 /**
  * Load metadata for a single provider without loading all providers.
  */
 function hybridauth_get_provider($name) {
-  ctools_include('plugins');
-  return ctools_get_plugins('hybridauth', 'provider', $name);
+  //ctools_include('plugins');
+  //return ctools_get_plugins('hybridauth', 'provider', $name);
 }
 
 /**
@@ -758,8 +758,10 @@ function hybridauth_providers_list($reset = FALSE) {
       }
     }
 
+    //TODO:
+    //$providers = config_get('hybridauth.settings', 'hybridauth_providers');
     $providers = array();
-    $enabled_providers = array_filter(config_get('hybridauth.settings', 'hybridauth_providers'));
+    $enabled_providers = array_filter($providers);
     foreach (array_keys($enabled_providers + $raw_providers) as $provider_id) {
       $providers[$provider_id] = $raw_providers[$provider_id];
     }
@@ -958,7 +960,8 @@ function hybridauth_get_provider_config($provider_id) {
   }
 
   if ($provider = hybridauth_get_provider($provider_id)) {
-    if ($function = ctools_plugin_get_function($provider, 'configuration_callback')) {
+    //CTOOLS TODO
+    if (0 && $function = ctools_plugin_get_function($provider, 'configuration_callback')) {
       $function($config, $provider_id);
     }
   }
@@ -989,36 +992,18 @@ function hybridauth_get_connected_providers() {
  * Returns the path to the HybridAuth library.
  */
 function _hybridauth_library_path() {
-  $library_path = &backdrop_static(__FUNCTION__, NULL);
 
-  if (!isset($library_path)) {
-    // Check if the variable is set.
-    $library_path = config_get('hybridauth.settings', 'hybridauth_library_path');
+  $library_path = backdrop_get_path('module', 'hybridauth') . '/library/hybridauth';
 
-    if (empty($library_path)) {
-      // Use libraries module or profile directory, fallback to standard directory.
-      if (module_exists('libraries')) {
-        $library_path = libraries_get_path('hybridauth');
-      }
-      else {
-        $profile = backdrop_get_path('profile', backdrop_get_profile());
-        $library_path = $profile . '/libraries/hybridauth';
-        if (!file_exists($library_path)) {
-          $library_path = 'sites/all/libraries/hybridauth';
-        }
-      }
-    }
-
-    // Check for the /Hybrid/Auth.php file.
-    if (file_exists($library_path . '/Hybrid/Auth.php')) {
-    }
-    elseif (file_exists($library_path . '/hybridauth/Hybrid/Auth.php')) {
-      $library_path .= '/hybridauth';
-    }
-    else {
-      watchdog('hybridauth', 'HybridAuth library is missing.', array(), WATCHDOG_ERROR);
-      $library_path = FALSE;
-    }
+  // Check for the /Hybrid/Auth.php file.
+  if (file_exists($library_path . '/Hybrid/Auth.php')) {
+  }
+  elseif (file_exists($library_path . '/hybridauth/Hybrid/Auth.php')) {
+    $library_path .= '/hybridauth';
+  }
+  else {
+    watchdog('hybridauth', 'HybridAuth library is missing.', array(), WATCHDOG_ERROR);
+    $library_path = FALSE;
   }
 
   return $library_path;
@@ -1034,7 +1019,8 @@ function _hybridauth_add_icon_pack_files($name, &$element) {
         $element['#attached'][$key][] = $icon_pack['path'] . '/' . $icon_pack[$key];
       }
     }
-    if ($function = ctools_plugin_get_function($icon_pack, 'initialize_callback')) {
+    //CTOOLS TODO
+    if (0 && $function = ctools_plugin_get_function($icon_pack, 'initialize_callback')) {
       $function($element);
     }
   }

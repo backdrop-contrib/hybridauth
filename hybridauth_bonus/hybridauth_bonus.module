@@ -5,11 +5,22 @@
  */
 
 /**
+ * Implements hook_config_info().
+ */
+function hybridauth_bonus_config_info() {
+  $prefixes['hybridauth_bonus.settings'] = array(
+    'label' => t('Module name settings'),
+    'group' => t('Configuration'),
+  );
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function hybridauth_bonus_form_hybridauth_admin_settings_alter(&$form, &$form_state, $form_id) {
+  $config = config('hybridauth_bonus.settings');
   $roles = user_roles(TRUE);
-  unset($roles[DRUPAL_AUTHENTICATED_RID]);
+  unset($roles[BACKDROP_AUTHENTICATED_RID]);
   if ($roles) {
     $form['vtabs']['fset_bonus_roles'] = array(
       '#type' => 'fieldset',
@@ -19,14 +30,14 @@ function hybridauth_bonus_form_hybridauth_admin_settings_alter(&$form, &$form_st
       '#type' => 'checkbox',
       '#title' => t('Suggest role choice when registering'),
       '#description' => t('Allow users to choose their roles when registering through HybridAuth.'),
-      '#default_value' => variable_get('hybridauth_bonus_registration_role_choice', 0),
+      '#default_value' => $config->get('hybridauth_bonus_registration_role_choice'),
     );
     $form['vtabs']['fset_bonus_roles']['hybridauth_bonus_registration_roles'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Roles to choose from'),
       '#description' => t('Select roles to suggest to new users when registering through HybridAuth.'),
       '#options' => $roles,
-      '#default_value' => variable_get('hybridauth_bonus_registration_roles', array()),
+      '#default_value' => $config->get('hybridauth_bonus_registration_roles'),
       '#states' => array(
         'visible' => array(
           ':input[name="hybridauth_bonus_registration_role_choice"]' => array('checked' => TRUE),
@@ -37,7 +48,7 @@ function hybridauth_bonus_form_hybridauth_admin_settings_alter(&$form, &$form_st
       '#type' => 'checkbox',
       '#title' => t('Make role selection required'),
       '#description' => t('Force users to select a role when registering through HybridAuth.'),
-      '#default_value' => variable_get('hybridauth_bonus_registration_roles_required', 0),
+      '#default_value' => $config->get('hybridauth_bonus_registration_roles_required'),
       '#states' => array(
         'visible' => array(
           ':input[name="hybridauth_bonus_registration_role_choice"]' => array('checked' => TRUE),
@@ -48,7 +59,7 @@ function hybridauth_bonus_form_hybridauth_admin_settings_alter(&$form, &$form_st
       '#type' => 'checkbox',
       '#title' => t('Allow several roles selection'),
       '#description' => t('Allow users to select several roles when registering through HybridAuth.'),
-      '#default_value' => variable_get('hybridauth_bonus_registration_roles_multiple', 1),
+      '#default_value' => $config->get('hybridauth_bonus_registration_roles_multiple'),
       '#states' => array(
         'visible' => array(
           ':input[name="hybridauth_bonus_registration_role_choice"]' => array('checked' => TRUE),
@@ -64,7 +75,7 @@ function hybridauth_bonus_form_hybridauth_admin_settings_alter(&$form, &$form_st
   $form['vtabs']['fset_bonus_forms']['hybridauth_bonus_customize_widget_per_form'] = array(
     '#type' => 'checkbox',
     '#title' => t('Customize HybridAuth widget per form'),
-    '#default_value' => variable_get('hybridauth_bonus_customize_widget_per_form', 0),
+    '#default_value' => $config->get('hybridauth_bonus_customize_widget_per_form'),
   );
   foreach (hybridauth_forms_list() as $f_id => $f_name) {
     $form['vtabs']['fset_bonus_forms'][$f_id] = array(
@@ -82,6 +93,7 @@ function hybridauth_bonus_form_hybridauth_admin_settings_alter(&$form, &$form_st
       $value = $form['vtabs']['fset_widget'][$key];
       $new_key = str_replace('hybridauth_', 'hybridauth_bonus_', $key) . '_' . $f_id;
       $form['vtabs']['fset_bonus_forms'][$f_id][$new_key] = $value;
+      // TODO This variable was probably removed in Backdrop without replacement.
       $form['vtabs']['fset_bonus_forms'][$f_id][$new_key]['#default_value'] = variable_get($new_key, $value['#default_value']);
 
       if ($key == 'hybridauth_widget_use_overlay' || $key == 'hybridauth_widget_link_title') {
@@ -106,7 +118,7 @@ function hybridauth_bonus_form_hybridauth_admin_settings_alter(&$form, &$form_st
  * Implements hook_hybridauth_registration_form().
  */
 function hybridauth_bonus_hybridauth_registration_form($data) {
-  if (empty($data['roles']) && variable_get('hybridauth_bonus_registration_role_choice', 0)) {
+  if (empty($data['roles']) && config_get('hybridauth_bonus.settings', 'hybridauth_bonus_registration_role_choice')) {
     return TRUE;
   }
   return FALSE;
@@ -116,13 +128,14 @@ function hybridauth_bonus_hybridauth_registration_form($data) {
  * Implements hook_form_FORM_ID_alter().
  */
 function hybridauth_bonus_form_hybridauth_additional_info_form_alter(&$form, &$form_state, $form_id) {
-  if (variable_get('hybridauth_bonus_registration_role_choice', 0)) {
-    $roles = array_intersect_key(user_roles(TRUE), array_filter(variable_get('hybridauth_bonus_registration_roles', array())));
+  $config = config('hybridauth_bonus.settings');
+  if ($config->get('hybridauth_bonus_registration_role_choice')) {
+    $roles = array_intersect_key(user_roles(TRUE), array_filter($config->get('hybridauth_bonus_registration_roles')));
     $form['fset']['roles'] = array(
-      '#type' => variable_get('hybridauth_bonus_registration_roles_multiple', 1) ? 'checkboxes' : 'radios',
+      '#type' => $config->get('hybridauth_bonus_registration_roles_multiple') ? 'checkboxes' : 'radios',
       '#title' => t('Roles'),
       '#options' => $roles,
-      '#required' => variable_get('hybridauth_bonus_registration_roles_required', 0),
+      '#required' => $config->get('hybridauth_bonus_registration_roles_required'),
     );
 
     // $form['#validate'][] = 'hybridauth_bonus_form_hybridauth_additional_info_form_validate';
@@ -131,8 +144,12 @@ function hybridauth_bonus_form_hybridauth_additional_info_form_alter(&$form, &$f
 }
 
 /*function hybridauth_bonus_form_hybridauth_additional_info_form_validate($form, &$form_state) {
-}*/
+ }*/
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function hybridauth_bonus_form_hybridauth_additional_info_form_submit($form, &$form_state) {
   if (isset($form_state['values']['roles'])) {
     if (is_array($form_state['values']['roles'])) {
@@ -173,17 +190,18 @@ function hybridauth_bonus_form_comment_form_alter(&$form, &$form_state, $form_id
 }
 
 function _hybridauth_bonus_form_alter(&$form, &$form_state, $form_id) {
-  if (!variable_get('hybridauth_bonus_customize_widget_per_form', 0) || !array_key_exists($form_id, hybridauth_forms_list())) {
+  $config = config('hybridauth_bonus.settings');
+  if (!$config->get('hybridauth_bonus_customize_widget_per_form') || !array_key_exists($form_id, hybridauth_forms_list())) {
     return;
   }
 
   if (isset($form['hybridauth'])) {
-    $form['hybridauth']['#title'] = variable_get('hybridauth_bonus_widget_title_' . $form_id, 'Or log in with...');
-    $form['hybridauth']['#hybridauth_widget_type'] = variable_get('hybridauth_bonus_widget_type_' . $form_id, 'list');
-    $form['hybridauth']['#hybridauth_widget_use_overlay'] = variable_get('hybridauth_bonus_widget_use_overlay_' . $form_id, 1);
-    $form['hybridauth']['#hybridauth_widget_link_text'] = variable_get('hybridauth_bonus_widget_link_text_' . $form_id, 'Social network account');
-    $form['hybridauth']['#hybridauth_widget_link_title'] = variable_get('hybridauth_bonus_widget_link_title_' . $form_id, 'Social network account');
-    $form['hybridauth']['#hybridauth_widget_icon_pack'] = variable_get('hybridauth_bonus_widget_icon_pack_' . $form_id, 'hybridauth_32');
-    $form['hybridauth']['#weight'] = variable_get('hybridauth_bonus_widget_weight_' . $form_id, 100);
+    $form['hybridauth']['#title'] = $config->get('hybridauth_bonus_widget_title_' . $form_id);
+    $form['hybridauth']['#hybridauth_widget_type'] = $config->get('hybridauth_bonus_widget_type_' . $form_id);
+    $form['hybridauth']['#hybridauth_widget_use_overlay'] = $config->get('hybridauth_bonus_widget_use_overlay_' . $form_id);
+    $form['hybridauth']['#hybridauth_widget_link_text'] = $config->get('hybridauth_bonus_widget_link_text_' . $form_id);
+    $form['hybridauth']['#hybridauth_widget_link_title'] = $config->get('hybridauth_bonus_widget_link_title_' . $form_id);
+    $form['hybridauth']['#hybridauth_widget_icon_pack'] = $config->get('hybridauth_bonus_widget_icon_pack_' . $form_id);
+    $form['hybridauth']['#weight'] = $config->get('hybridauth_bonus_widget_weight_' . $form_id);
   }
 }

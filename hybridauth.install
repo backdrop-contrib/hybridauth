@@ -10,53 +10,53 @@
 function hybridauth_uninstall() {
   module_load_include('module', 'hybridauth');
   foreach (hybridauth_providers_list() as $provider_id => $provider_name) {
-    variable_del('hybridauth_provider_' . $provider_id . '_keys_id');
-    variable_del('hybridauth_provider_' . $provider_id . '_keys_key');
-    variable_del('hybridauth_provider_' . $provider_id . '_keys_secret');
-    variable_del('hybridauth_provider_' . $provider_id . '_window_type');
-    variable_del('hybridauth_provider_' . $provider_id . '_window_width');
-    variable_del('hybridauth_provider_' . $provider_id . '_window_height');
-    variable_del('hybridauth_provider_' . $provider_id . '_display');
-    variable_del('hybridauth_provider_' . $provider_id . '_scope');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_keys_id');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_keys_key');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_keys_secret');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_window_type');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_window_width');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_window_height');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_display');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_scope');
     // Legacy variables.
-    variable_del('hybridauth_provider_' . $provider_id . '_enabled');
-    variable_del('hybridauth_provider_' . $provider_id . '_weight');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_enabled');
+    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_weight');
   }
 
-  variable_del('hybridauth_providers');
-  variable_del('hybridauth_library_path');
-  variable_del('hybridauth_required_fields');
-  variable_del('hybridauth_widget_title');
-  variable_del('hybridauth_widget_type');
-  variable_del('hybridauth_widget_use_overlay');
-  variable_del('hybridauth_widget_link_text');
-  variable_del('hybridauth_widget_link_title');
-  variable_del('hybridauth_widget_icon_pack');
-  variable_del('hybridauth_widget_weight');
-  variable_del('hybridauth_widget_hide_links');
-  variable_del('hybridauth_disable_username_change');
-  variable_del('hybridauth_remove_password_fields');
-  variable_del('hybridauth_pictures');
-  variable_del('hybridauth_register');
-  variable_del('hybridauth_email_verification');
-  variable_del('hybridauth_email_verification_body');
-  variable_del('hybridauth_email_verification_subject');
-  variable_del('hybridauth_username');
-  variable_del('hybridauth_registration_username_change');
-  variable_del('hybridauth_registration_password');
-  variable_del('hybridauth_display_name');
-  variable_del('hybridauth_override_realname');
-  variable_del('hybridauth_destination');
-  variable_del('hybridauth_destination_error');
-  variable_del('hybridauth_forms');
-  variable_del('hybridauth_duplicate_emails');
-  variable_del('hybridauth_proxy');
-  variable_del('hybridauth_debug');
+  config_clear('hybridauth.settings', 'hybridauth_providers');
+  config_clear('hybridauth.settings', 'hybridauth_library_path');
+  config_clear('hybridauth.settings', 'hybridauth_required_fields');
+  config_clear('hybridauth.settings', 'hybridauth_widget_title');
+  config_clear('hybridauth.settings', 'hybridauth_widget_type');
+  config_clear('hybridauth.settings', 'hybridauth_widget_use_overlay');
+  config_clear('hybridauth.settings', 'hybridauth_widget_link_text');
+  config_clear('hybridauth.settings', 'hybridauth_widget_link_title');
+  config_clear('hybridauth.settings', 'hybridauth_widget_icon_pack');
+  config_clear('hybridauth.settings', 'hybridauth_widget_weight');
+  config_clear('hybridauth.settings', 'hybridauth_widget_hide_links');
+  config_clear('hybridauth.settings', 'hybridauth_disable_username_change');
+  config_clear('hybridauth.settings', 'hybridauth_remove_password_fields');
+  config_clear('hybridauth.settings', 'hybridauth_pictures');
+  config_clear('hybridauth.settings', 'hybridauth_register');
+  config_clear('hybridauth.settings', 'hybridauth_email_verification');
+  config_clear('hybridauth.settings', 'hybridauth_email_verification_body');
+  config_clear('hybridauth.settings', 'hybridauth_email_verification_subject');
+  config_clear('hybridauth.settings', 'hybridauth_username');
+  config_clear('hybridauth.settings', 'hybridauth_registration_username_change');
+  config_clear('hybridauth.settings', 'hybridauth_registration_password');
+  config_clear('hybridauth.settings', 'hybridauth_display_name');
+  config_clear('hybridauth.settings', 'hybridauth_override_realname');
+  config_clear('hybridauth.settings', 'hybridauth_destination');
+  config_clear('hybridauth.settings', 'hybridauth_destination_error');
+  config_clear('hybridauth.settings', 'hybridauth_forms');
+  config_clear('hybridauth.settings', 'hybridauth_duplicate_emails');
+  config_clear('hybridauth.settings', 'hybridauth_proxy');
+  config_clear('hybridauth.settings', 'hybridauth_debug');
 
   // Legacy variables.
-  variable_del('hybridauth_registration_role_choice');
-  variable_del('hybridauth_registration_roles');
-  variable_del('hybridauth_window_type');
+  config_clear('hybridauth.settings', 'hybridauth_registration_role_choice');
+  config_clear('hybridauth.settings', 'hybridauth_registration_roles');
+  config_clear('hybridauth.settings', 'hybridauth_window_type');
 }
 
 /**
@@ -78,7 +78,7 @@ function hybridauth_requirements($phase) {
           'severity' => REQUIREMENT_OK,
         );
       }
-      catch(Exception $e) {
+      catch (Exception $e) {
         $requirements['hybridauth'] = array(
           'title' => $t('HybridAuth library'),
           'description' => $e->getMessage(),
@@ -191,151 +191,160 @@ function hybridauth_schema() {
   return $schema;
 }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function hybridauth_update_7000(&$sandbox) { }
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function hybridauth_update_7001(&$sandbox) { }
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function hybridauth_update_7002(&$sandbox) { }
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function hybridauth_update_7003(&$sandbox) { }
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function hybridauth_update_7004(&$sandbox) { }
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function hybridauth_update_7005(&$sandbox) { }
+
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function hybridauth_update_7006(&$sandbox) { }
+
 /**
- * Set us at schema rev 7000 as a base version.
+ * Implements hook_update_last_removed().
  */
-function hybridauth_update_7000(&$sandbox) {
+function hybridauth_update_last_removed() {
+  return 7006;
 }
 
 /**
- * Add hybridauth_session DB table.
+ * Implements hook_update_N().
  */
-function hybridauth_update_7001(&$sandbox) {
-  if (!db_table_exists('hybridauth_session')) {
-    $schema = hybridauth_schema();
-    db_create_table('hybridauth_session', $schema['hybridauth_session']);
-  }
+function hybridauth_update_1000() {
+  $config = config('hybridauth.settings');
+  $config->set('hybridauth_register', update_variable_get('hybridauth_register', 'novalue'));
+  $config->set('hybridauth_providers', update_variable_get('hybridauth_providers', 'dynamic value in file /hybridauth/hybridauth.module line 925'));
+  $config->set('hybridauth_required_fields', update_variable_get('hybridauth_required_fields', 'dynamic value in file /hybridauth/hybridauth.pages.inc line 580'));
+  $config->set('hybridauth_widget_title', update_variable_get('hybridauth_widget_title', 'dynamic value in file /hybridauth/hybridauth.module line 287'));
+  $config->set('hybridauth_widget_type', update_variable_get('hybridauth_widget_type', 'list'));
+  $config->set('hybridauth_widget_use_overlay', update_variable_get('hybridauth_widget_use_overlay', '1'));
+  $config->set('hybridauth_widget_link_text', update_variable_get('hybridauth_widget_link_text', 'dynamic value in file /hybridauth/hybridauth.module line 291'));
+  $config->set('hybridauth_widget_link_title', update_variable_get('hybridauth_widget_link_title', 'dynamic value in file /hybridauth/hybridauth.module line 292'));
+  $config->set('hybridauth_widget_icon_pack', update_variable_get('hybridauth_widget_icon_pack', 'hybridauth_32'));
+  $config->set('hybridauth_widget_weight', update_variable_get('hybridauth_widget_weight', '100'));
+  $config->set('hybridauth_widget_hide_links', update_variable_get('hybridauth_widget_hide_links', 'novalue'));
+  $config->set('hybridauth_email_verification', update_variable_get('hybridauth_email_verification', 'novalue'));
+  $config->set('hybridauth_pictures', update_variable_get('hybridauth_pictures', '1'));
+  $config->set('hybridauth_username', update_variable_get('hybridauth_username', 'dynamic value in file /hybridauth/hybridauth.module line 1036'));
+  $config->set('hybridauth_display_name', update_variable_get('hybridauth_display_name', 'dynamic value in file /hybridauth/hybridauth.module line 563'));
+  $config->set('hybridauth_registration_username_change', update_variable_get('hybridauth_registration_username_change', 'novalue'));
+  $config->set('hybridauth_registration_password', update_variable_get('hybridauth_registration_password', 'novalue'));
+  $config->set('hybridauth_override_realname', update_variable_get('hybridauth_override_realname', 'novalue'));
+  $config->set('hybridauth_disable_username_change', update_variable_get('hybridauth_disable_username_change', '1'));
+  $config->set('hybridauth_remove_password_fields', update_variable_get('hybridauth_remove_password_fields', '1'));
+  $config->set('hybridauth_forms', update_variable_get('hybridauth_forms', 'dynamic value in file /hybridauth/hybridauth.module line 243'));
+  $config->set('hybridauth_destination', update_variable_get('hybridauth_destination', ''));
+  $config->set('hybridauth_destination_error', update_variable_get('hybridauth_destination_error', ''));
+  $config->set('hybridauth_duplicate_emails', update_variable_get('hybridauth_duplicate_emails', '1'));
+  $config->set('hybridauth_proxy', update_variable_get('hybridauth_proxy', 'NULL'));
+  $config->set('hybridauth_debug', update_variable_get('hybridauth_debug', 'FALSE'));
+  $config->set('hybridauth_provider_provider_id_keys_id', update_variable_get('hybridauth_provider_provider_id_keys_id', 'dynamic variable in file /hybridauth/hybridauth.module line 927'));
+  $config->set('hybridauth_provider_provider_id_keys_key', update_variable_get('hybridauth_provider_provider_id_keys_key', 'dynamic variable in file /hybridauth/hybridauth.module line 928'));
+  $config->set('hybridauth_provider_provider_id_keys_secret', update_variable_get('hybridauth_provider_provider_id_keys_secret', 'dynamic variable in file /hybridauth/hybridauth.module line 929'));
+  $config->set('hybridauth_provider_provider_id_window_type', update_variable_get('hybridauth_provider_provider_id_window_type', 'dynamic variable in file /hybridauth/hybridauth.pages.inc line 468'));
+  $config->set('hybridauth_provider_provider_id_window_width', update_variable_get('hybridauth_provider_provider_id_window_width', 'dynamic variable in file /hybridauth/hybridauth.module line 362'));
+  $config->set('hybridauth_provider_provider_id_window_height', update_variable_get('hybridauth_provider_provider_id_window_height', 'dynamic variable in file /hybridauth/hybridauth.module line 363'));
+  $config->set('hybridauth_provider_provider_id_enabled', update_variable_get('hybridauth_provider_provider_id_enabled', 'dynamic variable in file /hybridauth/hybridauth.install line 236'));
+  $config->set('hybridauth_provider_provider_id_weight', update_variable_get('hybridauth_provider_provider_id_weight', 'dynamic variable in file /hybridauth/hybridauth.install line 230'));
+  $config->set('hybridauth_provider_provider_id_scope', update_variable_get('hybridauth_provider_provider_id_scope', 'dynamic variable in file /hybridauth/plugins/provider/Pinterest/Pinterest.inc line 53'));
+  $config->set('hybridauth_provider_provider_id_display', update_variable_get('hybridauth_provider_provider_id_display', 'dynamic variable in file /hybridauth/plugins/provider/Facebook/Facebook.inc line 36'));
+  $config->set('hybridauth_library_path', update_variable_get('hybridauth_library_path', ''));
+  $config->set('hybridauth_provider_provider_id_oauth_server', update_variable_get('hybridauth_provider_provider_id_oauth_server', 'dynamic variable in file /hybridauth/plugins/provider/ESIA/ESIA.inc line 55'));
+  $config->set('hybridauth_provider_provider_id_skipssl', update_variable_get('hybridauth_provider_provider_id_skipssl', 'dynamic variable in file /hybridauth/plugins/provider/DrupalOAuth2/DrupalOAuth2.inc line 61'));
+  $config->set('hybridauth_provider_provider_id_proxy', update_variable_get('hybridauth_provider_provider_id_proxy', 'dynamic variable in file /hybridauth/plugins/provider/DrupalOAuth2/DrupalOAuth2.inc line 62'));
+  $config->set('hybridauth_provider_provider_id_certificate_path', update_variable_get('hybridauth_provider_provider_id_certificate_path', 'dynamic variable in file /hybridauth/plugins/provider/ESIA/ESIA.inc line 56'));
+  $config->set('hybridauth_provider_provider_id_private_key_path', update_variable_get('hybridauth_provider_provider_id_private_key_path', 'dynamic variable in file /hybridauth/plugins/provider/ESIA/ESIA.inc line 57'));
+  $config->set('hybridauth_provider_provider_id_private_key_pass', update_variable_get('hybridauth_provider_provider_id_private_key_pass', 'dynamic variable in file /hybridauth/plugins/provider/ESIA/ESIA.inc line 58'));
+  $config->set('hybridauth_provider_provider_id_trustForwarded', update_variable_get('hybridauth_provider_provider_id_trustForwarded', 'dynamic variable in file /hybridauth/plugins/provider/Facebook/Facebook.inc line 68'));
+  $config->set('hybridauth_provider_provider_id_includeEmail', update_variable_get('hybridauth_provider_provider_id_includeEmail', 'dynamic variable in file /hybridauth/plugins/provider/Twitter/Twitter.inc line 37'));
+  update_variable_del('hybridauth_register');
+  update_variable_del('hybridauth_providers');
+  update_variable_del('hybridauth_required_fields');
+  update_variable_del('hybridauth_widget_title');
+  update_variable_del('hybridauth_widget_type');
+  update_variable_del('hybridauth_widget_use_overlay');
+  update_variable_del('hybridauth_widget_link_text');
+  update_variable_del('hybridauth_widget_link_title');
+  update_variable_del('hybridauth_widget_icon_pack');
+  update_variable_del('hybridauth_widget_weight');
+  update_variable_del('hybridauth_widget_hide_links');
+  update_variable_del('hybridauth_email_verification');
+  update_variable_del('hybridauth_pictures');
+  update_variable_del('hybridauth_username');
+  update_variable_del('hybridauth_display_name');
+  update_variable_del('hybridauth_registration_username_change');
+  update_variable_del('hybridauth_registration_password');
+  update_variable_del('hybridauth_override_realname');
+  update_variable_del('hybridauth_disable_username_change');
+  update_variable_del('hybridauth_remove_password_fields');
+  update_variable_del('hybridauth_forms');
+  update_variable_del('hybridauth_destination');
+  update_variable_del('hybridauth_destination_error');
+  update_variable_del('hybridauth_duplicate_emails');
+  update_variable_del('hybridauth_proxy');
+  update_variable_del('hybridauth_debug');
+  update_variable_del('hybridauth_provider_provider_id_keys_id');
+  update_variable_del('hybridauth_provider_provider_id_keys_key');
+  update_variable_del('hybridauth_provider_provider_id_keys_secret');
+  update_variable_del('hybridauth_provider_provider_id_window_type');
+  update_variable_del('hybridauth_provider_provider_id_window_width');
+  update_variable_del('hybridauth_provider_provider_id_window_height');
+  update_variable_del('hybridauth_provider_provider_id_enabled');
+  update_variable_del('hybridauth_provider_provider_id_weight');
+  update_variable_del('hybridauth_provider_provider_id_scope');
+  update_variable_del('hybridauth_provider_provider_id_display');
+  update_variable_del('hybridauth_library_path');
+  update_variable_del('hybridauth_provider_provider_id_oauth_server');
+  update_variable_del('hybridauth_provider_provider_id_skipssl');
+  update_variable_del('hybridauth_provider_provider_id_proxy');
+  update_variable_del('hybridauth_provider_provider_id_certificate_path');
+  update_variable_del('hybridauth_provider_provider_id_private_key_path');
+  update_variable_del('hybridauth_provider_provider_id_private_key_pass');
+  update_variable_del('hybridauth_provider_provider_id_trustForwarded');
+  update_variable_del('hybridauth_provider_provider_id_includeEmail');
 }
 
 /**
- * Remove unused hybridauth variables of disabled providers.
+ * Implements hook_install().
  */
-function hybridauth_update_7002(&$sandbox) {
-  foreach (hybridauth_providers_list() as $provider_id => $provider_name) {
-    if (!variable_get('hybridauth_provider_' . $provider_id . '_enabled', 0)) {
-      variable_del('hybridauth_provider_' . $provider_id . '_enabled');
-      variable_del('hybridauth_provider_' . $provider_id . '_weight');
-    }
-  }
-}
-
-/**
- * Remove plenty of variables (2 per provider).
- */
-function hybridauth_update_7003(&$sandbox) {
-  $weights = array();
-  $hybridauth_providers = array();
-
-  foreach (array_keys(hybridauth_providers_list()) as $provider_id) {
-    $weights[$provider_id] = variable_get('hybridauth_provider_' . $provider_id . '_weight', 50);
-    variable_del('hybridauth_provider_' . $provider_id . '_weight');
-  }
-  asort($weights);
-
-  foreach (array_keys($weights) as $provider_id) {
-    $hybridauth_providers[$provider_id] = variable_get('hybridauth_provider_' . $provider_id . '_enabled', 0) ? $provider_id : 0;
-    variable_del('hybridauth_provider_' . $provider_id . '_enabled');
-  }
-
-  variable_set('hybridauth_providers', $hybridauth_providers);
-}
-
-/**
- * Remove users passwords stored in plaintext from users DB table.
- */
-function hybridauth_update_7004(&$sandbox) {
-  // Calculate the total number of users.
-  if (!isset($sandbox['total'])) {
-    $sandbox['total'] = db_select('users', 'u')
-      ->condition('data', '%' . db_like('pass') . '%', 'LIKE')
-      ->countQuery()
-      ->execute()
-      ->fetchField();
-    if (!$sandbox['total']) {
-      return t('There are no user accounts to process.');
-    }
-    $sandbox['current'] = 0;
-  }
-
-  // Process this number of users per pass.
-  $users_per_pass = 10;
-
-  // Get users' ids for one pass.
-  $result = db_select('users', 'u')
-    ->fields('u', array('uid'))
-    ->condition('data', '%' . db_like('pass') . '%', 'LIKE')
-    ->orderBy('u.uid')
-    ->range($sandbox['current'], $users_per_pass)
-    ->execute();
-
-  // Remove user password from $user['data']['hybridauth'].
-  foreach ($result as $row) {
-    // Skip the anonymous user uid == 0.
-    if (!empty($row->uid)) {
-      $account = user_load($row->uid);
-      if (isset($account->data['hybridauth']['pass'])) {
-        unset($account->data['hybridauth']['pass']);
-        user_save($account);
-      }
-    }
-    $sandbox['current']++;
-  }
-
-  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
-
-  if ($sandbox['#finished'] === 1) {
-    return t('@total user accounts were processed.', array('@total' => $sandbox['total']));
-  }
-}
-
-/**
- * Failed update, moved to hybridauth_update_7006().
- */
-function hybridauth_update_7005(&$sandbox) {
-}
-
-/**
- * Remove users passwords stored in plaintext from hybridauth_identity DB table.
- */
-function hybridauth_update_7006(&$sandbox) {
-  // Calculate the total number of HybridAuth identities.
-  if (!isset($sandbox['total'])) {
-    $sandbox['total'] = db_select('hybridauth_identity', 'ha_id')
-      ->condition('data', '%' . db_like('pass') . '%', 'LIKE')
-      ->countQuery()
-      ->execute()
-      ->fetchField();
-    if (!$sandbox['total']) {
-      return t('There are no HybridAuth identities to process.');
-    }
-    $sandbox['current'] = 0;
-  }
-
-  // Process this number of HybridAuth identities per pass.
-  $identities_per_pass = 10;
-
-  // Get HybridAuth identities ids for one pass.
-  $result = db_select('hybridauth_identity', 'ha_id')
-    ->fields('ha_id', array('id'))
-    ->condition('data', '%' . db_like('pass') . '%', 'LIKE')
-    ->orderBy('ha_id.id')
-    ->range($sandbox['current'], $identities_per_pass)
-    ->execute();
-
-  // Remove user passwords from HybridAuth identities.
-  foreach ($result as $row) {
-    $identity = _hybridauth_identity_load_by_id($row->id);
-    $data = unserialize($identity['data']);
-    if (isset($data['pass'])) {
-      unset($data['pass']);
-      _hybridauth_identity_save($data, $identity['uid']);
-    }
-    $sandbox['current']++;
-  }
-
-  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
-
-  if ($sandbox['#finished'] === 1) {
-    return t('@total HybridAuth identities were processed.', array('@total' => $sandbox['total']));
-  }
+function hybridauth_install() {
+  // Dynamically generated variable data was detected.
+  // /hybridauth/hybridauth.module line 925
+  // /hybridauth/hybridauth.pages.inc line 580
+  // /hybridauth/hybridauth.module line 287
+  // /hybridauth/hybridauth.module line 291
+  // /hybridauth/hybridauth.module line 292
+  // /hybridauth/hybridauth.module line 1036
+  // /hybridauth/hybridauth.module line 563
+  // /hybridauth/hybridauth.module line 243
+  // /hybridauth/hybridauth.module line 927
+  // /hybridauth/hybridauth.module line 928
+  // /hybridauth/hybridauth.module line 929
+  // /hybridauth/hybridauth.pages.inc line 468
+  // /hybridauth/hybridauth.module line 362
+  // /hybridauth/hybridauth.module line 363
+  // /hybridauth/hybridauth.install line 236
+  // /hybridauth/hybridauth.install line 230
+  // /hybridauth/plugins/provider/Pinterest/Pinterest.inc line 53
+  // /hybridauth/plugins/provider/Facebook/Facebook.inc line 36
+  // /hybridauth/plugins/provider/ESIA/ESIA.inc line 55
+  // /hybridauth/plugins/provider/DrupalOAuth2/DrupalOAuth2.inc line 61
+  // /hybridauth/plugins/provider/DrupalOAuth2/DrupalOAuth2.inc line 62
+  // /hybridauth/plugins/provider/ESIA/ESIA.inc line 56
+  // /hybridauth/plugins/provider/ESIA/ESIA.inc line 57
+  // /hybridauth/plugins/provider/ESIA/ESIA.inc line 58
+  // /hybridauth/plugins/provider/Facebook/Facebook.inc line 68
+  // /hybridauth/plugins/provider/Twitter/Twitter.inc line 37
 }

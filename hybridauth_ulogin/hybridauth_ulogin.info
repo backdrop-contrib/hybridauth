@@ -1,6 +1,7 @@
 name = HybridAuth uLogin
 description = "Migrate uLogin identities to HybridAuth."
-core = 7.x
+backdrop = 1.x
+type = module
 package = "HybridAuth"
 configure = admin/config/people/hybridauth/ulogin
 dependencies[] = hybridauth

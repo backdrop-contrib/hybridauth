@@ -1,0 +1,15 @@
+{
+    "_config_name": "hybridauth_bonus.settings",
+    "hybridauth_bonus_registration_role_choice": "novalue",
+    "hybridauth_bonus_registration_roles": "dynamic value in file /hybridauth/hybridauth_bonus/hybridauth_bonus.module line 120",
+    "hybridauth_bonus_registration_roles_required": "novalue",
+    "hybridauth_bonus_registration_roles_multiple": "1",
+    "hybridauth_bonus_customize_widget_per_form": "novalue",
+    "hybridauth_bonus_widget_title_form_id": "dynamic variable in file /hybridauth/hybridauth_bonus/hybridauth_bonus.module line 181",
+    "hybridauth_bonus_widget_type_form_id": "dynamic variable in file /hybridauth/hybridauth_bonus/hybridauth_bonus.module line 182",
+    "hybridauth_bonus_widget_use_overlay_form_id": "dynamic variable in file /hybridauth/hybridauth_bonus/hybridauth_bonus.module line 183",
+    "hybridauth_bonus_widget_link_text_form_id": "dynamic variable in file /hybridauth/hybridauth_bonus/hybridauth_bonus.module line 184",
+    "hybridauth_bonus_widget_link_title_form_id": "dynamic variable in file /hybridauth/hybridauth_bonus/hybridauth_bonus.module line 185",
+    "hybridauth_bonus_widget_icon_pack_form_id": "dynamic variable in file /hybridauth/hybridauth_bonus/hybridauth_bonus.module line 186",
+    "hybridauth_bonus_widget_weight_form_id": "dynamic variable in file /hybridauth/hybridauth_bonus/hybridauth_bonus.module line 187"
+}

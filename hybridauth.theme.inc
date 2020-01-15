@@ -22,10 +22,10 @@ function template_preprocess_hybridauth_widget(&$vars, $hook) {
 function template_preprocess_hybridauth_provider_icon(&$vars, $hook) {
   $icon_pack_classes = array(
     'hybridauth-icon',
-    drupal_html_class($vars['provider_id']),
-    drupal_html_class('hybridauth-icon-' . $vars['icon_pack']),
-    drupal_html_class('hybridauth-' . $vars['provider_id']),
-    drupal_html_class('hybridauth-' . $vars['provider_id'] . '-' . $vars['icon_pack']),
+    backdrop_html_class($vars['provider_id']),
+    backdrop_html_class('hybridauth-icon-' . $vars['icon_pack']),
+    backdrop_html_class('hybridauth-' . $vars['provider_id']),
+    backdrop_html_class('hybridauth-' . $vars['provider_id'] . '-' . $vars['icon_pack']),
   );
 
   ctools_include('plugins');

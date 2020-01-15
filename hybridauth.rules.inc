@@ -94,9 +94,9 @@ function hybridauth_url_managed_file($url, $directory) {
       return array('file' => '');
     }
     // Make a request.
-    $content = drupal_http_request($url);
+    $content = backdrop_http_request($url);
     if (isset($content->error)) {
-      watchdog('hybridauth', 'Error while executing drupal_http_request() to %url: %error.', array('%url' => $url, '%error' => $content->error), WATCHDOG_ERROR);
+      watchdog('hybridauth', 'Error while executing backdrop_http_request() to %url: %error.', array('%url' => $url, '%error' => $content->error), WATCHDOG_ERROR);
       return array('file' => '');
     }
     else {
@@ -136,7 +136,7 @@ function hybridauth_dmy_to_date($day, $month, $year) {
  * Rules action.
  */
 function hybridauth_set_destination($destination) {
-  drupal_static_reset('drupal_get_destination');
+  backdrop_static_reset('backdrop_get_destination');
   $_GET['destination'] = $destination;
 }
 
@@ -291,7 +291,10 @@ function hybridauth_rules_condition_info() {
     'label' => t('User created by HybridAuth'),
     'group' => t('HybridAuth'),
     'parameter' => array(
-      'account' => array('label' => t('User'), 'type' => 'user'),
+      'account' => array(
+        'label' => t('User'),
+        'type' => 'user',
+      ),
     ),
   );
 

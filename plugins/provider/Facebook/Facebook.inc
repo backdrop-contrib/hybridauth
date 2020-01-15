@@ -12,7 +12,12 @@ $plugin = array(
   'configuration_callback' => 'hybridauth_provider_facebook_configuration_callback',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function hybridauth_provider_facebook_configuration_form_callback(&$form, $provider_id) {
+  $config = config('hybridauth.settings');
   unset($form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_key']);
 
   $form['vtabs']['application']['#description'] = t('<p>Enter your application ID and private key. You can get these by creating a new application at <a href="!apps_uri">!apps_uri</a>.</p>'
@@ -20,10 +25,10 @@ function hybridauth_provider_facebook_configuration_form_callback(&$form, $provi
     . '<p>You must set <strong>Site URL</strong> to <strong>%site_uri</strong>.</p>'
     . '<p>You must set <strong>Callback URL</strong> to <strong>%callback_uri</strong>.</p>',
     array(
-      '!apps_uri' => 'https://developers.facebook.com/apps',
-      '%site_uri' => url('<front>', array('absolute' => TRUE)),
-      '%callback_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'query' => array('hauth_done' => 'Facebook'), 'language' => _hybridauth_language_default())),
-    )
+    '!apps_uri' => 'https://developers.facebook.com/apps',
+    '%site_uri' => url('<front>', array('absolute' => TRUE)),
+    '%callback_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'query' => array('hauth_done' => 'Facebook'), 'language' => _hybridauth_language_default())),
+  )
   );
 
   $form['vtabs']['window_settings']['hybridauth_provider_' . $provider_id . '_display'] = array(
@@ -33,7 +38,7 @@ function hybridauth_provider_facebook_configuration_form_callback(&$form, $provi
       'page' => t('Page'),
       'popup' => t('Popup'),
     ),
-    '#default_value' => variable_get('hybridauth_provider_' . $provider_id . '_display', ''),
+    '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_display'),
     '#description' => t('Determines how the authentication window is rendered.'),
   );
   $form['vtabs']['advanced'] = array(
@@ -42,7 +47,7 @@ function hybridauth_provider_facebook_configuration_form_callback(&$form, $provi
   );
 
   // Compatibility conversion from the array value.
-  $default_value = variable_get('hybridauth_provider_' . $provider_id . '_scope', hybridauth_provider_facebook_scope_default());
+  $default_value = $config->get('hybridauth_provider_' . $provider_id . '_scope');
   if (is_array($default_value)) {
     $default_value = implode(',', array_filter($default_value));
   }
@@ -57,17 +62,25 @@ function hybridauth_provider_facebook_configuration_form_callback(&$form, $provi
   $form['vtabs']['advanced']['hybridauth_provider_' . $provider_id . '_trustForwarded'] = array(
     '#type' => 'checkbox',
     '#title' => t('Trust X-Forwarded-* headers'),
-    '#default_value' => variable_get('hybridauth_provider_' . $provider_id . '_trustForwarded', FALSE),
+    '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_trustForwarded'),
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function hybridauth_provider_facebook_configuration_callback(&$config, $provider_id) {
   if (empty($config['scope'])) {
     $config['scope'] = hybridauth_provider_facebook_scope_default();
   }
-  $config['trustForwarded'] = variable_get('hybridauth_provider_' . $provider_id . '_trustForwarded', FALSE);
+  $config['trustForwarded'] = config_get('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_trustForwarded');
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function hybridauth_provider_facebook_scope_default() {
   return 'public_profile,email';
 }

@@ -4,6 +4,10 @@
  * Admin pages for the HybridAuth uLogin module.
  */
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function hybridauth_ulogin_migrate_form($form, &$form_state) {
   $form = array();
   $form['message'] = array(
@@ -19,6 +23,10 @@ function hybridauth_ulogin_migrate_form($form, &$form_state) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function hybridauth_ulogin_migrate_form_submit($form, &$form_state) {
   $batch = array(
     // 'title' => t('Processing'),
@@ -29,7 +37,7 @@ function hybridauth_ulogin_migrate_form_submit($form, &$form_state) {
       array('_hybridauth_ulogin_batch_operation', array()),
     ),
     'finished' => '_hybridauth_ulogin_finished_callback',
-    'file' => drupal_get_path('module', 'hybridauth_ulogin') . '/hybridauth_ulogin.admin.inc',
+    'file' => backdrop_get_path('module', 'hybridauth_ulogin') . '/hybridauth_ulogin.admin.inc',
   );
   batch_set($batch);
 }
@@ -56,10 +64,10 @@ function _hybridauth_ulogin_batch_operation(&$context) {
 
 function _hybridauth_ulogin_finished_callback($success, $results, $operations) {
   if ($success) {
-    drupal_set_message(format_plural(count($results), 'Processed 1 uLogin identity.', 'Processed @count uLogin identities.'));
+    backdrop_set_message(format_plural(count($results), 'Processed 1 uLogin identity.', 'Processed @count uLogin identities.'));
   }
   else {
-    drupal_set_message(t('An error has occurred.'), 'error');
+    backdrop_set_message(t('An error has occurred.'), 'error');
   }
 }
 
@@ -104,7 +112,7 @@ function _hybridauth_ulogin_identity_process($ulogin_identity) {
 }
 
 function _hybridauth_ulogin_providers_map() {
-  $providers_map = &drupal_static(__FUNCTION__, NULL);
+  $providers_map = &backdrop_static(__FUNCTION__, NULL);
   if (!isset($providers_map)) {
     // Map ulogin network key => hybridauth provider key.
     $providers_map = array(
@@ -142,7 +150,7 @@ function _hybridauth_ulogin_provider_convert($ulogin_network_key) {
 }
 
 function _hybridauth_ulogin_data_map() {
-  $data_map = &drupal_static(__FUNCTION__, NULL);
+  $data_map = &backdrop_static(__FUNCTION__, NULL);
   if (!isset($data_map)) {
     // Map ulogin data key => hybridauth data key.
     $data_map = array(

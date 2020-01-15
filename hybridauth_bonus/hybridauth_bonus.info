@@ -1,6 +1,7 @@
 name = HybridAuth Bonus
 description = "Provides HybridAuth bonus features, like roles choosing upon registration."
-core = 7.x
+backdrop = 1.x
+type = module
 package = "HybridAuth"
 configure = admin/config/people/hybridauth
 dependencies[] = hybridauth

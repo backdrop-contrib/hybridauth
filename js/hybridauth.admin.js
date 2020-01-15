@@ -1,16 +1,16 @@
-/*global Drupal: false, jQuery: false */
+/*global Backdrop: false, jQuery: false */
 /*jslint devel: true, browser: true, maxerr: 50, indent: 2 */
 (function ($) {
   "use strict";
 
-  Drupal.behaviors.hybridauth_vtabs_SettingsSummary = {};
-  Drupal.behaviors.hybridauth_vtabs_SettingsSummary.attach = function(context, settings) {
-    /* Make sure this behavior is processed only if drupalSetSummary is defined. */
-    if (typeof jQuery.fn.drupalSetSummary == 'undefined') {
+  Backdrop.behaviors.hybridauth_vtabs_SettingsSummary = {};
+  Backdrop.behaviors.hybridauth_vtabs_SettingsSummary.attach = function(context, settings) {
+    /* Make sure this behavior is processed only if backdropSetSummary is defined. */
+    if (typeof jQuery.fn.backdropSetSummary == 'undefined') {
       return;
     }
 
-    $('#edit-fset-providers', context).drupalSetSummary(function(context) {
+    $('#edit-fset-providers', context).backdropSetSummary(function(context) {
       var vals = [];
 
       $('input', context).each(function (index, Element) {
@@ -22,7 +22,7 @@
       return vals.join(', ');
     });
 
-    $('#edit-fset-fields', context).drupalSetSummary(function(context) {
+    $('#edit-fset-fields', context).backdropSetSummary(function(context) {
       var vals = [];
 
       $('input', context).each(function (index, Element) {
@@ -34,7 +34,7 @@
       return vals.join(', ');
     });
 
-    $('#edit-fset-widget', context).drupalSetSummary(function(context) {
+    $('#edit-fset-widget', context).backdropSetSummary(function(context) {
       var vals = [];
 
       var value = $('#edit-hybridauth-widget-title', context).attr('value');
@@ -43,7 +43,7 @@
         vals.push(label + ': ' + value);
       }
       else {
-        vals.push(label + ': ' + Drupal.t('None'));
+        vals.push(label + ': ' + Backdrop.t('None'));
       }
 
       var widget_type;
@@ -65,7 +65,7 @@
           vals.push(label + ': ' + value);
         }
         else {
-          vals.push(label + ': ' + Drupal.t('None'));
+          vals.push(label + ': ' + Backdrop.t('None'));
         }
       }
 
@@ -76,7 +76,7 @@
           vals.push(label + ': ' + value);
         }
         else {
-          vals.push(label + ': ' + Drupal.t('None'));
+          vals.push(label + ': ' + Backdrop.t('None'));
         }
       }
 
@@ -90,13 +90,13 @@
         vals.push(label + ': ' + value);
       }
       else {
-        vals.push(label + ': ' + Drupal.t('None'));
+        vals.push(label + ': ' + Backdrop.t('None'));
       }
 
       return vals.join('<br />');
     });
 
-    $('#edit-fset-account', context).drupalSetSummary(function(context) {
+    $('#edit-fset-account', context).backdropSetSummary(function(context) {
       var vals = [];
 
       $('label', context).each(function (index, Element) {
@@ -128,7 +128,7 @@
       return vals.join('<br />');
     });
 
-    $('#edit-fset-forms', context).drupalSetSummary(function(context) {
+    $('#edit-fset-forms', context).backdropSetSummary(function(context) {
       var vals = [];
 
       var label = '<span style="font-weight:bold;">' + $.trim($('label[for="edit-hybridauth-forms"]', context).text()) + '</span>';
@@ -144,7 +144,7 @@
       return vals.join('<br />');
     });
 
-    $('#edit-fset-other', context).drupalSetSummary(function(context) {
+    $('#edit-fset-other', context).backdropSetSummary(function(context) {
       var vals = [];
 
       var value = $('#edit-hybridauth-destination', context).attr('value');
@@ -153,7 +153,7 @@
         vals.push(label + ': ' + value);
       }
       else {
-        vals.push(label + ': ' + Drupal.t('return to the same page'));
+        vals.push(label + ': ' + Backdrop.t('return to the same page'));
       }
       value = $('#edit-hybridauth-destination-error', context).attr('value');
       label = '<span style="font-weight:bold;">' + $.trim($('label[for="edit-hybridauth-destination-error"]', context).text()) + '</span>';
@@ -161,7 +161,7 @@
         vals.push(label + ': ' + value);
       }
       else {
-        vals.push(label + ': ' + Drupal.t('return to the same page'));
+        vals.push(label + ': ' + Backdrop.t('return to the same page'));
       }
 
       label = '<span style="font-weight:bold;">' + $.trim($('label[for="edit-hybridauth-duplicate-emails"]', context).text()) + '</span>';
@@ -180,15 +180,15 @@
         vals.push(label + ': ' + value);
       }
       else {
-        vals.push(label + ': ' + Drupal.t('None'));
+        vals.push(label + ': ' + Backdrop.t('None'));
       }
 
       label = '<span style="font-weight:bold;">' + $.trim($('label[for="edit-hybridauth-debug"]', context).text()) + '</span>';
       if ($('#edit-hybridauth-debug', context).is(':checked')) {
-        vals.push(label + ': ' + Drupal.t('Enabled'));
+        vals.push(label + ': ' + Backdrop.t('Enabled'));
       }
       else {
-        vals.push(label + ': ' + Drupal.t('Disabled'));
+        vals.push(label + ': ' + Backdrop.t('Disabled'));
       }
 
       return vals.join('<br />');

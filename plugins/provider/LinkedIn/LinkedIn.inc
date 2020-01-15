@@ -11,6 +11,10 @@ $plugin = array(
   'configuration_form_callback' => 'hybridauth_provider_linkedin_configuration_form_callback',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function hybridauth_provider_linkedin_configuration_form_callback(&$form, $provider_id) {
   $app_settings = &$form['vtabs']['application'];
   $app_settings['#description'] = t('Enter the Client ID and Client Secret.');

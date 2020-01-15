@@ -17,7 +17,7 @@ function hybridauth_ulogin_menu() {
   $items['admin/config/people/hybridauth/ulogin'] = array(
     'title' => 'uLogin',
     'description' => 'Migrate uLogin identities to HybridAuth.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('hybridauth_ulogin_migrate_form'),
     'access arguments' => array('administer site configuration'),
     'file' => 'hybridauth_ulogin.admin.inc',

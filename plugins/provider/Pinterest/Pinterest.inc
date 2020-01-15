@@ -26,12 +26,12 @@ function hybridauth_provider_pinterest_configuration_form_callback(&$form, $prov
 
   $form['vtabs']['application']['#description'] = t('Enter the application ID and secret key as required. You can get these by creating a new application at !apps_uri',
     array(
-      '!apps_uri' => l($apps_uri, $apps_uri, array(
-        'attributes' => array(
-          'target' => '_blank',
-        )
-      ))
-    )
+    '!apps_uri' => l($apps_uri, $apps_uri, array(
+      'attributes' => array(
+        'target' => '_blank',
+      ),
+    )),
+  )
   );
   $form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_id']['#title'] = t('App ID');
   $form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_secret']['#title'] = t('App secret');
@@ -48,9 +48,9 @@ function hybridauth_provider_pinterest_configuration_form_callback(&$form, $prov
     '#title' => l('Permission scopes', $scope_uri, array(
       'attributes' => array(
         'target' => '_blank',
-      )
+      ),
     )),
-    '#default_value' => variable_get('hybridauth_provider_' . $provider_id . '_scope', hybridauth_provider_pinterest_scope_default()),
+    '#default_value' => config_get('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_scope'),
     '#options' => array(
       'read_public' => '<strong>read_public</strong> -- ' . t('Use GET method on a user’s Pins, boards and likes.'),
       'write_public' => '<strong>write_public</strong> -- ' . t('Use PATCH, POST and DELETE methods on a user’s Pins and boards.'),

@@ -15,10 +15,10 @@ function hybridauth_token_info() {
     'needs-data' => 'user',
   );
   /*$types['hybridauth2'] = array(
-    'name' => t('HybridAuth data'),
-    'description' => t('Information about the user from HybridAuth library.'),
-    'needs-data' => 'user',
-  );*/
+   'name' => t('HybridAuth data'),
+   'description' => t('Information about the user from HybridAuth library.'),
+   'needs-data' => 'user',
+   );*/
 
   $tokens = array();
   $tokens['user']['hybridauth'] = array(
@@ -33,17 +33,17 @@ function hybridauth_token_info() {
       'description' => $value . ' ' . t('provided by HybridAuth library.'),
     );
     /*$tokens['hybridauth2'][$key] = array(
-      'name' => $value,
-      'description' => $value . ' ' . t('provided by HybridAuth library.'),
-    );*/
+     'name' => $value,
+     'description' => $value . ' ' . t('provided by HybridAuth library.'),
+     );*/
   }
   /*foreach (hybridauth_providers_list() as $key => $value) {
-    $tokens['hybridauth'][$key] = array(
-      'name' => $value,
-      'description' => $value . t(' information through HybridAuth library.'),
-      'type' => 'hybridauth2',
-    );
-  }*/
+   $tokens['hybridauth'][$key] = array(
+   'name' => $value,
+   'description' => $value . t(' information through HybridAuth library.'),
+   'type' => 'hybridauth2',
+   );
+   }*/
 
   return array(
     'types' => $types,

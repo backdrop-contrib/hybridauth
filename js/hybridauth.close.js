@@ -1,10 +1,10 @@
-/*global Drupal: false, jQuery: false */
+/*global Backdrop: false, jQuery: false */
 /*jslint devel: true, browser: true, maxerr: 50, indent: 2 */
 (function ($) {
   "use strict";
 
-  Drupal.behaviors.hybridauth_close = {};
-  Drupal.behaviors.hybridauth_close.attach = function(context, settings) {
+  Backdrop.behaviors.hybridauth_close = {};
+  Backdrop.behaviors.hybridauth_close.attach = function(context, settings) {
     var win = window, popup = false;
     try {
       // Check for a popup.
@@ -20,11 +20,11 @@
       win = window.parent;
     }
     // Make redirect.
-    if (Drupal.settings.hybridauth.redirect) {
-      win.location.href = Drupal.settings.hybridauth.destination;
+    if (Backdrop.settings.hybridauth.redirect) {
+      win.location.href = Backdrop.settings.hybridauth.destination;
     }
     else {
-      win.location.href = Drupal.settings.hybridauth.destination_error;
+      win.location.href = Backdrop.settings.hybridauth.destination_error;
     }
     // Close the popup window.
     if (popup) {

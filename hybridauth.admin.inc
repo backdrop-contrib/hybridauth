@@ -50,7 +50,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     $available = array_key_exists($provider_id, $available_providers);
     $options[$provider_id] = array(
       'name' => $providers[$provider_id]['name'],
-      'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id])),
+      'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id]['name'])),
       'available' => $available ? t('Yes') : t('No'),
       'settings' => l(t('Settings'), 'admin/config/people/hybridauth/provider/' . $provider_id, array('query' => backdrop_get_destination())),
       '#attributes' => array(

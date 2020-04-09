@@ -56,6 +56,7 @@ function hybridauth_session_start() {
  * Returns HybridAuth widget with list of providers icons.
  */
 function hybridauth_providers($js, $icon_pack) {
+  dpm(__FUNCTION__);
   $build = array(
     '#type' => 'hybridauth_widget',
     '#title' => '',

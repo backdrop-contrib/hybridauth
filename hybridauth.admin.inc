@@ -40,22 +40,22 @@ function hybridauth_admin_settings($form, &$form_state) {
   $weight = -50;
   // Clear the providers cache here to get any new ones.
   $providers = hybridauth_providers_list(TRUE);
-  //TODO
-  //$enabled_providers = array_filter($config->get('hybridauth_providers'));
-  $enabled_providers = array_filter(array());
+  $enabled_providers = array_filter($config->get('hybridauth_providers'));
   $available_providers = hybridauth_providers_files();
   $form['vtabs']['fset_providers']['hybridauth_providers'] = array();
   // $icon_pack = variable_get('hybridauth_widget_icon_pack', 'hybridauth_32');
   $icon_pack = 'hybridauth_16';
-  //_hybridauth_add_icon_pack_files($icon_pack, $form);
+  _hybridauth_add_icon_pack_files($icon_pack, $form);
   foreach (array_keys($enabled_providers + $providers) as $provider_id) {
     $available = array_key_exists($provider_id, $available_providers);
     $options[$provider_id] = array(
-      'name' => $providers[$provider_id],
+      'name' => $providers[$provider_id]['name'],
       'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id])),
       'available' => $available ? t('Yes') : t('No'),
       'settings' => l(t('Settings'), 'admin/config/people/hybridauth/provider/' . $provider_id, array('query' => backdrop_get_destination())),
-      '#attributes' => array('class' => array('draggable')),
+      '#attributes' => array(
+        'class' => array('draggable'),
+      ),
     );
     $form['vtabs']['fset_providers']['hybridauth_providers']['hybridauth_provider_' . $provider_id . '_weight'] = array(
       '#tree' => FALSE,
@@ -179,7 +179,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#type' => 'radios',
     '#title' => t('Who can register accounts?'),
     '#options' => array(
-      0 => t('Follow core') . ': ' . $core_settings[config_get('system.performance', 'user_register')],
+      0 => t('Follow core') . ': ' . $core_settings[config_get('system.core', 'user_register')],
       1 => t('Visitors'),
       2 => t('Visitors, but administrator approval is required'),
       3 => t('Nobody, only login for existing accounts is possible'),
@@ -197,7 +197,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#type' => 'radios',
     '#title' => t('E-mail verification'),
     '#options' => array(
-      0 => t('Follow core') . ': ' . $core_settings[config_get('system.performance', 'user_email_verification')],
+      0 => t('Follow core') . ': ' . $core_settings[config_get('system.core', 'user_email_verification')],
       1 => t('Require e-mail verification'),
       2 => t("Don't require e-mail verification"),
     ),
@@ -230,14 +230,12 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#default_value' => _hybridauth_mail_text('hybridauth_email_verification_body', NULL, array(), FALSE),
     '#rows' => 12,
   );
-  if (module_exists('token')) {
-    $form['vtabs']['fset_account']['fset_email_verification_template']['hybridauth_token_tree'] = array(
-      '#theme' => 'token_tree',
-      '#token_types' => array('user'),
-      '#global_types' => TRUE,
-      '#dialog' => TRUE,
-    );
-  }
+  $form['vtabs']['fset_account']['fset_email_verification_template']['hybridauth_token_tree'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('user'),
+    '#global_types' => TRUE,
+    '#dialog' => TRUE,
+  );
   $form['vtabs']['fset_account']['hybridauth_pictures'] = array(
     '#type' => 'checkbox',
     '#title' => t('Save HybridAuth provided picture as user picture'),
@@ -251,33 +249,27 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#title' => t('Username pattern'),
     '#default_value' => $config->get('hybridauth_username'),
     '#description' => t('Create username for new users using this pattern; counter will be added in case of username conflict.') . ' '
-      . t('You should use only HybridAuth tokens here as the user is not created yet.') . ' '
-      . t('Install !link module to get list of all available tokens.',
-        array('!link' => l(t('Token'), 'http://drupal.org/project/token', array('attributes' => array('target' => '_blank'))))),
+      . t('You should use only HybridAuth tokens here as the user is not created yet.'),
     '#required' => TRUE,
   );
   $form['vtabs']['fset_account']['hybridauth_display_name'] = array(
     '#type' => 'textfield',
     '#title' => t('Display name pattern'),
     '#default_value' => $config->get('hybridauth_display_name'),
-    '#description' => t('Leave empty to not alter display name. You can use any user tokens here.') . ' '
-      . t('Install !link module to get list of all available tokens.',
-        array('!link' => l(t('Token'), 'http://drupal.org/project/token', array('attributes' => array('target' => '_blank'))))),
+    '#description' => t('Leave empty to not alter display name. You can use any user tokens here.'),
   );
-  if (module_exists('token')) {
-    $form['vtabs']['fset_account']['fset_token'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Tokens'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    );
-    $form['vtabs']['fset_account']['fset_token']['hybridauth_token_tree'] = array(
-      '#theme' => 'token_tree',
-      '#token_types' => array('user'),
-      '#global_types' => FALSE,
-      '#dialog' => TRUE,
-    );
-  }
+  $form['vtabs']['fset_account']['fset_token'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Tokens'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['vtabs']['fset_account']['fset_token']['hybridauth_token_tree'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('user'),
+    '#global_types' => FALSE,
+    '#dialog' => TRUE,
+  );
   $form['vtabs']['fset_account']['hybridauth_registration_username_change'] = array(
     '#type' => 'checkbox',
     '#title' => t('Allow username change when registering'),
@@ -332,9 +324,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#title' => t('Other settings'),
   );
   $destination_description = t('Backdrop path to redirect to, like "node/1". Leave empty to return to the same page (set to [HTTP_REFERER] for widget in modal dialogs loaded by AJAX).') . '<br/>'
-    . t('You can use any user or global tokens here.') . ' '
-    . t('Install !link module to get list of all available tokens.',
-      array('!link' => l(t('Token'), 'http://drupal.org/project/token', array('attributes' => array('target' => '_blank')))));
+    . t('You can use any user or global tokens here.');
   $form['vtabs']['fset_other']['hybridauth_destination'] = array(
     '#type' => 'textfield',
     '#title' => t('Redirect after login'),
@@ -347,20 +337,18 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#default_value' => $config->get('hybridauth_destination_error'),
     '#description' => $destination_description,
   );
-  if (module_exists('token')) {
-    $form['vtabs']['fset_other']['fset_token'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Tokens'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    );
-    $form['vtabs']['fset_other']['fset_token']['hybridauth_token_tree'] = array(
-      '#theme' => 'token_tree',
-      '#token_types' => array('user'),
-      '#global_types' => TRUE,
-      '#dialog' => TRUE,
-    );
-  }
+  $form['vtabs']['fset_other']['fset_token'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Tokens'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['vtabs']['fset_other']['fset_token']['hybridauth_token_tree'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('user'),
+    '#global_types' => TRUE,
+    '#dialog' => TRUE,
+  );
   $options = array(
     0 => t('Allow duplicate email addresses, create new user account and login'),
     1 => t("Don't allow duplicate email addresses, block registration and advise to login using the existing account"),
@@ -507,10 +495,10 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
     '#description' => $modal_description ? t("Be careful with modal windows - some authentication providers (Twitter, LinkedIn) won't work with them.") : '',
   );
   $base = array(
-    '#type' => 'textfield',
-    '#element_validate' => array('element_validate_integer_positive'),
+    '#type' => 'number',
     '#size' => 4,
-    '#maxlength' => 4,
+    '#min' => 1,
+    '#max' => 2000,
     '#states' => array(
       'invisible' => array(
         ':input[name="hybridauth_provider_' . $provider_id . '_window_type"]' => array('value' => 'current'),
@@ -528,15 +516,19 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
     '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_window_height'),
   ) + $base;
 
-  if ($provider = hybridauth_get_provider($provider_id)) {
-    //CTOOLS TODO
-    if (0 && $function = ctools_plugin_get_function($provider, 'configuration_form_callback')) {
+  $provider = hybridauth_get_provider($provider_id);
+  if (!empty($provider)) {
+    require_once BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc';
+    if (!empty($provider[$provider_id]['plugin']['configuration_form_callback'])) {
+      $function = $provider[$provider_id]['plugin']['configuration_form_callback'];
       $function($form, $provider_id);
     }
   }
 
   return system_settings_form($form);
 }
+
+
 
 /**
  * Form validation handler for the hybridauth provider admin settings form.
@@ -568,7 +560,7 @@ function hybridauth_report() {
     ->fetchAllAssoc('provider', PDO::FETCH_ASSOC);
   foreach ($results as $result) {
     $rows[] = array(
-      $providers[$result['provider']],
+      $providers[$result['provider']]['name'],
       $result['count'],
     );
   }

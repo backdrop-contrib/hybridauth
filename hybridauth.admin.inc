@@ -12,6 +12,7 @@
  * @ingroup forms
  */
 function hybridauth_admin_settings($form, &$form_state) {
+  $path = backdrop_get_path('module', 'hybridauth');
   $config = config('hybridauth.settings');
   if ($config->get('hybridauth_register') == 0 && config_get('system.performance', 'user_register') == USER_REGISTER_ADMINISTRATORS_ONLY) {
     backdrop_set_message(t('Currently only administrators can create new user accounts. Either change the "Who can register accounts?" option under "Account settings" tab or at the core <a href="!link">Account settings</a>.',
@@ -22,7 +23,7 @@ function hybridauth_admin_settings($form, &$form_state) {
   $form['vtabs'] = array(
     '#type' => 'vertical_tabs',
     '#attached' => array(
-      'js' => array(backdrop_get_path('module', 'hybridauth') . '/js/hybridauth.admin.js'),
+      'js' => array($path . '/js/hybridauth.admin.js'),
     ),
   );
 
@@ -37,26 +38,40 @@ function hybridauth_admin_settings($form, &$form_state) {
     'settings' => t('Settings'),
   );
   $options = array();
+  $options_unavailable = array();
   $weight = -50;
   // Clear the providers cache here to get any new ones.
   $providers = hybridauth_providers_list(TRUE);
   $enabled_providers = array_filter($config->get('hybridauth_providers'));
   $available_providers = hybridauth_providers_files();
   $form['vtabs']['fset_providers']['hybridauth_providers'] = array();
-  // $icon_pack = variable_get('hybridauth_widget_icon_pack', 'hybridauth_32');
-  $icon_pack = 'hybridauth_16';
+  $icon_pack = $config->get('hybridauth_widget_icon_pack');
   _hybridauth_add_icon_pack_files($icon_pack, $form);
   foreach (array_keys($enabled_providers + $providers) as $provider_id) {
     $available = array_key_exists($provider_id, $available_providers);
-    $options[$provider_id] = array(
-      'name' => $providers[$provider_id]['name'],
-      'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id]['name'])),
-      'available' => $available ? t('Yes') : t('No'),
-      'settings' => l(t('Settings'), 'admin/config/people/hybridauth/provider/' . $provider_id, array('query' => backdrop_get_destination())),
-      '#attributes' => array(
-        'class' => array('draggable'),
-      ),
-    );
+    // Sort options below by whether they are available or not.
+    if ($available) {
+      $options[$provider_id] = array(
+        'name' => $providers[$provider_id]['name'],
+        'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id]['name'])),
+        'available' => $available ? t('Yes') : t('No'),
+        'settings' => l(t('Settings'), 'admin/config/people/hybridauth/provider/' . $provider_id, array('query' => backdrop_get_destination())),
+        '#attributes' => array(
+          'class' => array('draggable'),
+        ),
+      );
+    }
+    else {
+      $options_unavailable[$provider_id] = array(
+        'name' => $providers[$provider_id]['name'],
+        'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id]['name'])),
+        'available' => $available ? t('Yes') : t('No'),
+        'settings' => '',
+        '#attributes' => array(
+          'class' => array('draggable', 'disabled'),
+        ),
+      );
+    }
     $form['vtabs']['fset_providers']['hybridauth_providers']['hybridauth_provider_' . $provider_id . '_weight'] = array(
       '#tree' => FALSE,
       '#type' => 'weight',
@@ -69,7 +84,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#type' => 'tableselect',
     '#title' => t('Providers'),
     '#header' => $header,
-    '#options' => $options,
+    '#options' => array_merge($options, $options_unavailable),
     '#default_value' => $enabled_providers,
     '#pre_render' => array('hybridauth_admin_providers_pre_render'),
   );
@@ -374,6 +389,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#description' => t('When in debug mode, extra error information will be logged/displayed. This should be disabled when not in development.'),
     '#default_value' => $config->get('hybridauth_debug'),
   );
+  $form['#attached']['css'][] = $path . '/css/hybridauth.admin.css';
 
   return system_settings_form($form);
 }
@@ -518,7 +534,9 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
 
   $provider = hybridauth_get_provider($provider_id);
   if (!empty($provider)) {
-    require_once BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc';
+    if (file_exists(BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc')) {
+      require_once BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc';
+    }
     if (!empty($provider[$provider_id]['plugin']['configuration_form_callback'])) {
       $function = $provider[$provider_id]['plugin']['configuration_form_callback'];
       $function($form, $provider_id);

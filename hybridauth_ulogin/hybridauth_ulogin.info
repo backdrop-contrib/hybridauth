@@ -5,3 +5,4 @@ type = module
 package = "HybridAuth"
 configure = admin/config/people/hybridauth/ulogin
 dependencies[] = hybridauth
+hidden = 1

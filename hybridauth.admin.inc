@@ -507,7 +507,7 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
     '#type' => 'radios',
     '#title' => t('Authentication window type'),
     '#options' => $options,
-    '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_window_type'),
+    '#default_value' => (!empty($config->get('hybridauth_provider_' . $provider_id . '_window_type'))) ? $config->get('hybridauth_provider_' . $provider_id . '_window_type') : 'current',
     '#description' => $modal_description ? t("Be careful with modal windows - some authentication providers (Twitter, LinkedIn) won't work with them.") : '',
   );
   $base = array(

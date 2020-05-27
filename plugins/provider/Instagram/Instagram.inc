@@ -5,13 +5,6 @@
  */
 
 /**
- * Plugin declaration.
- */
-$plugin = array(
-  'configuration_form_callback' => 'hybridauth_provider_instagram_configuration_form_callback',
-);
-
-/**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
  */

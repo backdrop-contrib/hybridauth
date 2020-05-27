@@ -140,7 +140,7 @@ function _hybridauth_window_close($redirect = TRUE) {
   // Don't show messages on this closing page, show them later.
   $page['#show_messages'] = FALSE;
   $page['#children'] = t('Closing...');
-  print theme('html', array('page' => $page));
+  print theme('page', $page);
   backdrop_exit();
 }
 
@@ -477,7 +477,7 @@ function _hybridauth_window_render_form($form, $provider_id) {
   else { // 'popup' or modal ('colorbox', 'shadowbox', 'fancybox', 'lightbox2')
     $page = element_info('page');
     $page['#children'] = theme('status_messages') . backdrop_render($form);
-    print theme('html', array('page' => $page));
+    print theme('page', $page);
   }
 
   backdrop_exit();
@@ -672,11 +672,23 @@ function hybridauth_user_identity($account) {
   $rows = array();
   $data_array = array();
   foreach ($identities as $identity) {
+    $name = '';
     $data = unserialize($identity['data']);
     $data_array[] = $data;
+    if (!empty($data['displayName'])) {
+      $name = $data['displayName'];
+    }
+    if (!empty($data['profileURL'])) {
+      if ($name != '') {
+        l($name, $data['profileURL'], array('attributes' => array('target' => '_blank'), 'external' => TRUE));
+      }
+      else {
+        $name = l($data['profileURL'], $data['profileURL'], array('attributes' => array('target' => '_blank'), 'external' => TRUE));
+      }
+    }
     $rows[] = array(
-      $providers[$data['provider']],
-      l($data['profileURL'], $data['profileURL'], array('attributes' => array('target' => '_blank'), 'external' => TRUE)),
+      $providers[$data['provider']]['name'],
+      $name,
       l(t('Delete'), 'user/' . $account->uid . '/hybridauth/delete/' . $identity['id']),
     );
   }

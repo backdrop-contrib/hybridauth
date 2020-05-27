@@ -204,50 +204,32 @@ function hybridauth_update_last_removed() {
 function hybridauth_update_1000() {
   $config = config('hybridauth.settings');
   $config->set('hybridauth_register', update_variable_get('hybridauth_register', 'novalue'));
-  $config->set('hybridauth_providers', update_variable_get('hybridauth_providers', 'dynamic value in file /hybridauth/hybridauth.module line 925'));
-  $config->set('hybridauth_required_fields', update_variable_get('hybridauth_required_fields', 'dynamic value in file /hybridauth/hybridauth.pages.inc line 580'));
-  $config->set('hybridauth_widget_title', update_variable_get('hybridauth_widget_title', 'dynamic value in file /hybridauth/hybridauth.module line 287'));
+  $config->set('hybridauth_providers', update_variable_get('hybridauth_providers', array()));
+  $config->set('hybridauth_required_fields', update_variable_get('hybridauth_required_fields', array('email' => 'email')));
+  $config->set('hybridauth_widget_title', update_variable_get('hybridauth_widget_title', 'Or log in with...'));
   $config->set('hybridauth_widget_type', update_variable_get('hybridauth_widget_type', 'list'));
   $config->set('hybridauth_widget_use_overlay', update_variable_get('hybridauth_widget_use_overlay', '1'));
-  $config->set('hybridauth_widget_link_text', update_variable_get('hybridauth_widget_link_text', 'dynamic value in file /hybridauth/hybridauth.module line 291'));
-  $config->set('hybridauth_widget_link_title', update_variable_get('hybridauth_widget_link_title', 'dynamic value in file /hybridauth/hybridauth.module line 292'));
+  $config->set('hybridauth_widget_link_text', update_variable_get('hybridauth_widget_link_text', 'Social network account'));
+  $config->set('hybridauth_widget_link_title', update_variable_get('hybridauth_widget_link_title', 'Social network account'));
   $config->set('hybridauth_widget_icon_pack', update_variable_get('hybridauth_widget_icon_pack', 'hybridauth_32'));
   $config->set('hybridauth_widget_weight', update_variable_get('hybridauth_widget_weight', '100'));
   $config->set('hybridauth_widget_hide_links', update_variable_get('hybridauth_widget_hide_links', 'novalue'));
   $config->set('hybridauth_email_verification', update_variable_get('hybridauth_email_verification', 'novalue'));
   $config->set('hybridauth_pictures', update_variable_get('hybridauth_pictures', '1'));
-  $config->set('hybridauth_username', update_variable_get('hybridauth_username', 'dynamic value in file /hybridauth/hybridauth.module line 1036'));
-  $config->set('hybridauth_display_name', update_variable_get('hybridauth_display_name', 'dynamic value in file /hybridauth/hybridauth.module line 563'));
+  $config->set('hybridauth_username', update_variable_get('hybridauth_username', '[user:hybridauth:firstName] [user:hybridauth:lastName]'));
+  $config->set('hybridauth_display_name', update_variable_get('hybridauth_display_name', '[user:hybridauth:firstName] [user:hybridauth:lastName]'));
   $config->set('hybridauth_registration_username_change', update_variable_get('hybridauth_registration_username_change', 'novalue'));
   $config->set('hybridauth_registration_password', update_variable_get('hybridauth_registration_password', 'novalue'));
   $config->set('hybridauth_override_realname', update_variable_get('hybridauth_override_realname', 'novalue'));
   $config->set('hybridauth_disable_username_change', update_variable_get('hybridauth_disable_username_change', '1'));
   $config->set('hybridauth_remove_password_fields', update_variable_get('hybridauth_remove_password_fields', '1'));
-  $config->set('hybridauth_forms', update_variable_get('hybridauth_forms', 'dynamic value in file /hybridauth/hybridauth.module line 243'));
+  $config->set('hybridauth_forms', update_variable_get('hybridauth_forms', array('user_login', 'user_login_block')));
   $config->set('hybridauth_destination', update_variable_get('hybridauth_destination', ''));
   $config->set('hybridauth_destination_error', update_variable_get('hybridauth_destination_error', ''));
   $config->set('hybridauth_duplicate_emails', update_variable_get('hybridauth_duplicate_emails', '1'));
   $config->set('hybridauth_proxy', update_variable_get('hybridauth_proxy', 'NULL'));
   $config->set('hybridauth_debug', update_variable_get('hybridauth_debug', 'FALSE'));
-  $config->set('hybridauth_provider_provider_id_keys_id', update_variable_get('hybridauth_provider_provider_id_keys_id', 'dynamic variable in file /hybridauth/hybridauth.module line 927'));
-  $config->set('hybridauth_provider_provider_id_keys_key', update_variable_get('hybridauth_provider_provider_id_keys_key', 'dynamic variable in file /hybridauth/hybridauth.module line 928'));
-  $config->set('hybridauth_provider_provider_id_keys_secret', update_variable_get('hybridauth_provider_provider_id_keys_secret', 'dynamic variable in file /hybridauth/hybridauth.module line 929'));
-  $config->set('hybridauth_provider_provider_id_window_type', update_variable_get('hybridauth_provider_provider_id_window_type', 'dynamic variable in file /hybridauth/hybridauth.pages.inc line 468'));
-  $config->set('hybridauth_provider_provider_id_window_width', update_variable_get('hybridauth_provider_provider_id_window_width', 'dynamic variable in file /hybridauth/hybridauth.module line 362'));
-  $config->set('hybridauth_provider_provider_id_window_height', update_variable_get('hybridauth_provider_provider_id_window_height', 'dynamic variable in file /hybridauth/hybridauth.module line 363'));
-  $config->set('hybridauth_provider_provider_id_enabled', update_variable_get('hybridauth_provider_provider_id_enabled', 'dynamic variable in file /hybridauth/hybridauth.install line 236'));
-  $config->set('hybridauth_provider_provider_id_weight', update_variable_get('hybridauth_provider_provider_id_weight', 'dynamic variable in file /hybridauth/hybridauth.install line 230'));
-  $config->set('hybridauth_provider_provider_id_scope', update_variable_get('hybridauth_provider_provider_id_scope', 'dynamic variable in file /hybridauth/plugins/provider/Pinterest/Pinterest.inc line 53'));
-  $config->set('hybridauth_provider_provider_id_display', update_variable_get('hybridauth_provider_provider_id_display', 'dynamic variable in file /hybridauth/plugins/provider/Facebook/Facebook.inc line 36'));
   $config->set('hybridauth_library_path', update_variable_get('hybridauth_library_path', ''));
-  $config->set('hybridauth_provider_provider_id_oauth_server', update_variable_get('hybridauth_provider_provider_id_oauth_server', 'dynamic variable in file /hybridauth/plugins/provider/ESIA/ESIA.inc line 55'));
-  $config->set('hybridauth_provider_provider_id_skipssl', update_variable_get('hybridauth_provider_provider_id_skipssl', 'dynamic variable in file /hybridauth/plugins/provider/DrupalOAuth2/DrupalOAuth2.inc line 61'));
-  $config->set('hybridauth_provider_provider_id_proxy', update_variable_get('hybridauth_provider_provider_id_proxy', 'dynamic variable in file /hybridauth/plugins/provider/DrupalOAuth2/DrupalOAuth2.inc line 62'));
-  $config->set('hybridauth_provider_provider_id_certificate_path', update_variable_get('hybridauth_provider_provider_id_certificate_path', 'dynamic variable in file /hybridauth/plugins/provider/ESIA/ESIA.inc line 56'));
-  $config->set('hybridauth_provider_provider_id_private_key_path', update_variable_get('hybridauth_provider_provider_id_private_key_path', 'dynamic variable in file /hybridauth/plugins/provider/ESIA/ESIA.inc line 57'));
-  $config->set('hybridauth_provider_provider_id_private_key_pass', update_variable_get('hybridauth_provider_provider_id_private_key_pass', 'dynamic variable in file /hybridauth/plugins/provider/ESIA/ESIA.inc line 58'));
-  $config->set('hybridauth_provider_provider_id_trustForwarded', update_variable_get('hybridauth_provider_provider_id_trustForwarded', 'dynamic variable in file /hybridauth/plugins/provider/Facebook/Facebook.inc line 68'));
-  $config->set('hybridauth_provider_provider_id_includeEmail', update_variable_get('hybridauth_provider_provider_id_includeEmail', 'dynamic variable in file /hybridauth/plugins/provider/Twitter/Twitter.inc line 37'));
   update_variable_del('hybridauth_register');
   update_variable_del('hybridauth_providers');
   update_variable_del('hybridauth_required_fields');
@@ -299,31 +281,5 @@ function hybridauth_update_1000() {
  * Implements hook_install().
  */
 function hybridauth_install() {
-  // Dynamically generated variable data was detected.
-  // /hybridauth/hybridauth.module line 925
-  // /hybridauth/hybridauth.pages.inc line 580
-  // /hybridauth/hybridauth.module line 287
-  // /hybridauth/hybridauth.module line 291
-  // /hybridauth/hybridauth.module line 292
-  // /hybridauth/hybridauth.module line 1036
-  // /hybridauth/hybridauth.module line 563
-  // /hybridauth/hybridauth.module line 243
-  // /hybridauth/hybridauth.module line 927
-  // /hybridauth/hybridauth.module line 928
-  // /hybridauth/hybridauth.module line 929
-  // /hybridauth/hybridauth.pages.inc line 468
-  // /hybridauth/hybridauth.module line 362
-  // /hybridauth/hybridauth.module line 363
-  // /hybridauth/hybridauth.install line 236
-  // /hybridauth/hybridauth.install line 230
-  // /hybridauth/plugins/provider/Pinterest/Pinterest.inc line 53
-  // /hybridauth/plugins/provider/Facebook/Facebook.inc line 36
-  // /hybridauth/plugins/provider/ESIA/ESIA.inc line 55
-  // /hybridauth/plugins/provider/DrupalOAuth2/DrupalOAuth2.inc line 61
-  // /hybridauth/plugins/provider/DrupalOAuth2/DrupalOAuth2.inc line 62
-  // /hybridauth/plugins/provider/ESIA/ESIA.inc line 56
-  // /hybridauth/plugins/provider/ESIA/ESIA.inc line 57
-  // /hybridauth/plugins/provider/ESIA/ESIA.inc line 58
-  // /hybridauth/plugins/provider/Facebook/Facebook.inc line 68
-  // /hybridauth/plugins/provider/Twitter/Twitter.inc line 37
+
 }

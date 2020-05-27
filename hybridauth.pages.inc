@@ -63,15 +63,8 @@ function hybridauth_providers($js, $icon_pack) {
     '#hybridauth_widget_icon_pack' => $icon_pack,
   );
 
-//TODO
-  if (0 && $js) {
-    ctools_include('modal');
-    ctools_modal_render(t('Log in using your account with'), $build);
-  }
-  else {
-    $build['#title'] = t('Log in using your account with');
-    return $build;
-  }
+  $build['#title'] = t('Log in using your account with');
+  return $build;
 }
 
 /**

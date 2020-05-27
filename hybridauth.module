@@ -89,7 +89,7 @@ function hybridauth_menu() {
     'file' => 'hybridauth.pages.inc',
     'type' => MENU_CALLBACK,
   );
-  $items['hybridauth/providers/%ctools_js/%'] = array(
+  $items['hybridauth/providers/%/%'] = array(
     'page callback' => 'hybridauth_providers',
     'page arguments' => array(2, 3),
     'access callback' => TRUE,
@@ -314,7 +314,6 @@ function hybridauth_element_info() {
         array('system', 'jquery.cookie'),
       ),
       'js' => array(
-        $path . '/js/hybridauth.modal.js',
         $path . '/js/hybridauth.onclick.js',
       ),
       'css' => array(
@@ -454,9 +453,8 @@ function hybridauth_widget_pre_render($element) {
       $provider_id = 'none';
       $class = array();
       if ($element['#hybridauth_widget_use_overlay']) {
-        $class = array('ctools-use-modal', 'ctools-modal-hybridauthmodal');
-        //ctools_include('modal');
-        //ctools_modal_add_js();
+        backdrop_add_library('system', 'backdrop.ajax');
+        $class = array('use-ajax', 'hybridauthmodal');
         $settings = array(
           'hybridauthmodal' => array(
             'modalSize' => array(
@@ -469,7 +467,6 @@ function hybridauth_widget_pre_render($element) {
               'contentBottom' => 45,
             ),
             'modalTheme' => 'HybridAuthModalDialog',
-            // 'throbberTheme' => 'HybridAuthModalThrobber',
             'modalOptions' => array(
               'opacity' => 0.55,
               'background' => '#000',
@@ -478,12 +475,6 @@ function hybridauth_widget_pre_render($element) {
             'animationSpeed' => 'slow',
             'closeText' => t('Close'),
             'closeImage' => '',
-            // 'loadingText' => t('Loading...'),
-            /* 'throbber' => theme('image', array(
- 'path' => ctools_image_path('throbber.gif'),
- 'title' => t('Loading...'),
- 'alt' => t('Loading'),
- )), */
           ),
         );
         $element['#attached']['js'][] = array(
@@ -509,6 +500,14 @@ function hybridauth_widget_pre_render($element) {
           'title' => $element['#hybridauth_widget_link_title'],
           'class' => $class,
           'rel' => array('nofollow'),
+          'data-dialog' => true,
+          'data-dialog-options' => '{
+            "dialogClass" : "hybridauth-modal",
+            "minHeight" : 200,
+            "minWidth" : 400,
+            "minHeight" : 300,
+            "minWidth" : 500
+          }',
         ),
       );
 

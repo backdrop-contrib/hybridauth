@@ -89,7 +89,7 @@ function hybridauth_menu() {
     'file' => 'hybridauth.pages.inc',
     'type' => MENU_CALLBACK,
   );
-  $items['hybridauth/providers/%ctools_js/%'] = array(
+  $items['hybridauth/providers/%/%'] = array(
     'page callback' => 'hybridauth_providers',
     'page arguments' => array(2, 3),
     'access callback' => TRUE,
@@ -314,7 +314,6 @@ function hybridauth_element_info() {
         array('system', 'jquery.cookie'),
       ),
       'js' => array(
-        $path . '/js/hybridauth.modal.js',
         $path . '/js/hybridauth.onclick.js',
       ),
       'css' => array(
@@ -452,39 +451,19 @@ function hybridauth_widget_pre_render($element) {
     case 'button':
     case 'link':
       $provider_id = 'none';
-      $class = array();
+      $class = $dialog_attributes = array();
       if ($element['#hybridauth_widget_use_overlay']) {
-        $class = array('ctools-use-modal', 'ctools-modal-hybridauthmodal');
-        //ctools_include('modal');
-        //ctools_modal_add_js();
-        $settings = array(
-          'hybridauthmodal' => array(
-            'modalSize' => array(
-              'type' => 'scale',
-              'width' => '400px',
-              'height' => '200px',
-              'addWidth' => 0,
-              'addHeight' => 0,
-              'contentRight' => 25,
-              'contentBottom' => 45,
-            ),
-            'modalTheme' => 'HybridAuthModalDialog',
-            // 'throbberTheme' => 'HybridAuthModalThrobber',
-            'modalOptions' => array(
-              'opacity' => 0.55,
-              'background' => '#000',
-            ),
-            'animation' => 'fadeIn',
-            'animationSpeed' => 'slow',
-            'closeText' => t('Close'),
-            'closeImage' => '',
-            // 'loadingText' => t('Loading...'),
-            /* 'throbber' => theme('image', array(
- 'path' => ctools_image_path('throbber.gif'),
- 'title' => t('Loading...'),
- 'alt' => t('Loading'),
- )), */
-          ),
+        backdrop_add_library('system', 'backdrop.ajax');
+        $class = array('use-ajax', 'hybridauthmodal');
+        $dialog_attributes = array(
+          'data-dialog' => true,
+          'data-dialog-options' => '{
+            "dialogClass" : "hybridauth-modal",
+            "minHeight" : 200,
+            "minWidth" : 400,
+            "minHeight" : 300,
+            "minWidth" : 500
+          }',
         );
         $element['#attached']['js'][] = array(
           'data' => $settings,
@@ -509,7 +488,7 @@ function hybridauth_widget_pre_render($element) {
           'title' => $element['#hybridauth_widget_link_title'],
           'class' => $class,
           'rel' => array('nofollow'),
-        ),
+        ) + $dialog_attributes,
       );
 
       $element['providers'][$provider_id] = array(
@@ -615,7 +594,7 @@ function hybridauth_user_view($account, $view_mode, $langcode) {
       $profile_link = l($data['profileURL'], $data['profileURL'], array('attributes' => array('target' => '_blank'), 'external' => TRUE));
     }
     $rows[] = array(
-      $providers[$data['provider']],
+      $providers[$data['provider']]['name'],
       $profile_link,
     );
   }
@@ -634,53 +613,82 @@ function hybridauth_user_view($account, $view_mode, $langcode) {
   );
 }
 
-/**
- * Implements hook_ctools_plugin_type().
- */
-function hybridauth_ctools_plugin_type() {
-  return array(
-    'icon_pack' => array(
-      'cache' => TRUE,
-      // Themes can offer this plugin.
-      'load themes' => TRUE,
-    ),
-    'provider' => array(
-      'cache' => TRUE,
-    ),
-  );
-}
+
 
 /**
- * Implements hook_ctools_plugin_directory().
+ * Implements hook_hybridauth_icon_pack().
  */
-function hybridauth_ctools_plugin_directory($module, $type) {
-  if ($module == 'hybridauth' && ($type == 'icon_pack' || $type == 'provider')) {
-    return 'plugins/' . $type;
-  }
+function hybridauth_hybridauth_icon_pack($name) {
+  $filepath = backdrop_get_path('module', 'hybridauth') . '/plugins/icon_pack/';
+  $plugins = array(
+    'hybridauth_16' => array(
+      'title' => t('HybridAuth') . ' 16px',
+      'css' => $filepath . 'hybridauth_16/hybridauth_16.css',
+      'path' => $filepath . 'hybridauth_16/',
+    ),
+    'hybridauth_24' => array(
+      'title' => t('HybridAuth') . ' 24px',
+      'css' => $filepath . 'hybridauth_24/hybridauth_24.css',
+      'path' => $filepath . 'hybridauth_24/',
+    ),
+    'hybridauth_32' => array(
+      'title' => t('HybridAuth') . ' 32px',
+      'css' => $filepath . 'hybridauth_32/hybridauth_32.css',
+      'path' => $filepath . 'hybridauth_32/',
+    ),
+    'hybridauth_48' => array(
+      'title' => t('HybridAuth') . ' 48px',
+      'css' => $filepath . 'hybridauth_48/hybridauth_48.css',
+      'path' => $filepath . 'hybridauth_48/',
+    ),
+  );
+
+  return (isset($plugins[$name])) ? $plugins[$name] : $plugins;
 }
 
 /**
  * Load metadata for a single icon pack without loading all icon packs.
  */
 function hybridauth_get_icon_pack($name) {
-  //ctools_include('plugins');
-  //return ctools_get_plugins('hybridauth', 'icon_pack', $name);
+  $plugins = module_invoke_all('hybridauth_icon_pack', $name);
+  return $plugins;
 }
 
 /**
  * Load metadata for all icon packs.
  */
 function hybridauth_get_icon_packs() {
-  //ctools_include('plugins');
-  //return ctools_get_plugins('hybridauth', 'icon_pack');
+  $plugins = module_invoke_all('hybridauth_icon_pack', NULL);
+  return $plugins;
+}
+
+/**
+  * Implements hook_hybridauth_get_providers().
+  *
+  * @param array $ids
+  *   An array of strings representing name(s) of provider(s), or an empty 
+  *   array to return all providers.
+  *
+  * @return array
+  *   An array of metadata about the provider(s) requested.
+  */
+function hybridauth_hybridauth_get_providers($ids = array()) {
+  $all_providers = hybridauth_providers_list();
+  $providers = array();
+  foreach($ids as $id) {
+    if (!empty($all_providers[$id])) {
+      $providers[$id] = $all_providers[$id];
+    }
+  }
+  return $providers;
 }
 
 /**
  * Load metadata for a single provider without loading all providers.
  */
-function hybridauth_get_provider($name) {
-  //ctools_include('plugins');
-  //return ctools_get_plugins('hybridauth', 'provider', $name);
+function hybridauth_get_provider($id) {
+  $provider = module_invoke_all('hybridauth_get_providers', array($id));
+  return $provider;
 }
 
 /**
@@ -710,47 +718,216 @@ function hybridauth_robotstxt() {
  */
 function hybridauth_providers_list($reset = FALSE) {
   $providers = &backdrop_static(__FUNCTION__, NULL);
+  $path = array (
+    'path' => backdrop_get_path('module', 'hybridauth'),
+  );
 
   if (!isset($providers)) {
     $raw_providers = array(
       // Core providers.
-      'AOL' => t('AOL'),
-      'Facebook' => t('Facebook'),
-      'Foursquare' => t('Foursquare'),
-      'Google' => t('Google'),
-      'LinkedIn' => t('LinkedIn'),
-      'Live' => t('Windows Live'),
-      'MySpace' => t('MySpace'),
-      'OpenID' => t('OpenID'),
-      'Twitter' => t('Twitter'),
-      'Yahoo' => t('Yahoo'),
+      
+      //TODO: add all plugin info here (as in Google)
+      
+      'Google' => array(
+        'name' => t('Google'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_google_configuration_form_callback',
+          'configuration_callback' => 'hybridauth_provider_google_configuration_callback',
+        ) + $path,
+      ),
+      'Twitter' => array(
+        'name' =>  t('Twitter'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_twitter_configuration_form_callback',
+          'configuration_callback' => 'hybridauth_provider_twitter_configuration_callback',
+        ) + $path,
+      ),
+      'Instagram' => array(
+        'name' =>  t('Instagram'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_instagram_configuration_form_callback',
+        ) + $path,
+      ),
+      'Facebook' => array(
+        'name' =>  t('Facebook'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_facebook_configuration_form_callback',
+          'configuration_callback' => 'hybridauth_provider_facebook_configuration_callback',
+        ) + $path,
+      ),
+      'LinkedIn' => array(
+        'name' =>  t('LinkedIn'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_linkedin_configuration_form_callback',
+        ) + $path,
+      ),
+      'Disqus' => array(
+        'name' =>  t('Disqus'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_disqus_configuration_form_callback',
+        ) + $path,
+      ),
+      'MySpace' => array(
+        'name' =>  t('MySpace'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_myspace_configuration_form_callback',
+        ) + $path,
+      ),
+      'Live' => array(
+        'name' =>  t('Windows Live'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_live_configuration_form_callback',
+        ) + $path,
+      ),
+      'QQ' => array(
+        'name' =>  t('QQ'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_qq_configuration_form_callback',
+        ) + $path,
+      ),
+      'Yahoo' => array(
+        'name' =>  t('Yahoo'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_yahoo_configuration_form_callback',
+        ) + $path,
+      ),
+      'Vkontakte' => array(
+        'name' =>  t('VKontakte'),
+        'plugin' => array(
+          'configuration_form_callback' => 'hybridauth_provider_vkontakte_configuration_form_callback',
+        ) + $path,
+      ),
+      'Paypal' => array(
+        'name' =>  t('Paypal'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'AOL' => array(
+        'name' =>  t('AOL'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Foursquare' => array(
+        'name' =>  t('Foursquare'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'OpenID' => array(
+        'name' =>  t('OpenID'),
+        'plugin' => array(
+        ) + $path,
+      ),
       // Additional providers.
-      'px500' => t('500px'),
-      'Disqus' => t('Disqus'),
-      'FamilySearch' => t('FamilySearch'),
-      'Geni' => t('Geni'),
-      'GitHub' => t('GitHub'),
-      'Goodreads' => t('Goodreads'),
-      'HumanitarianId' => t('Humanitarian ID'),
-      'Identica' => t('Identica'),
-      'Instagram' => t('Instagram'),
-      'LastFM' => t('LastFM'),
-      'Mailru' => t('Mail.ru'),
-      'Murmur' => t('Murmur'),
-      'MyHeritage' => t('MyHeritage'),
-      'Odnoklassniki' => t('Odnoklassniki'),
-      'Pixnet' => t('Pixnet'),
-      'Plurk' => t('Plurk'),
-      'QQ' => t('QQ'),
-      'Sina' => t('Sina'),
-      'Skyrock' => t('Skyrock'),
-      'Steam' => t('Steam'),
-      'Tumblr' => t('Tumblr'),
-      'TwitchTV' => t('Twitch.tv'),
-      'Viadeo' => t('Viadeo'),
-      'Vimeo' => t('Vimeo'),
-      'Vkontakte' => t('VKontakte'),
-      'Yandex' => t('Yandex'),
+      'px500' => array(
+        'name' =>  t('500px'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'FamilySearch' => array(
+        'name' =>  t('FamilySearch'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Geni' => array(
+        'name' =>  t('Geni'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'GitHub' => array(
+        'name' =>  t('GitHub'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Goodreads' => array(
+        'name' =>  t('Goodreads'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'HumanitarianId' => array(
+        'name' =>  t('Humanitarian ID'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Identica' => array(
+        'name' =>  t('Identica'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'LastFM' => array(
+        'name' =>  t('LastFM'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Mailru' => array(
+        'name' =>  t('Mail.ru'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Murmur' => array(
+        'name' =>  t('Murmur'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'MyHeritage' => array(
+        'name' =>  t('MyHeritage'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Odnoklassniki' => array(
+        'name' =>  t('Odnoklassniki'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Pixnet' => array(
+        'name' =>  t('Pixnet'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Plurk' => array(
+        'name' =>  t('Plurk'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Sina' => array(
+        'name' =>  t('Sina'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Skyrock' => array(
+        'name' =>  t('Skyrock'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Steam' => array(
+        'name' =>  t('Steam'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Tumblr' => array(
+        'name' =>  t('Tumblr'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'TwitchTV' => array(
+        'name' =>  t('Twitch.tv'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Viadeo' => array(
+        'name' =>  t('Viadeo'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Vimeo' => array(
+        'name' =>  t('Vimeo'),
+        'plugin' => array(
+        ) + $path,
+      ),
+      'Yandex' => array(
+        'name' =>  t('Yandex'),
+        'plugin' => array(
+        ) + $path,
+      ),
     );
     foreach (hybridauth_providers_files($reset) as $name => $file) {
       if (!array_key_exists($name, $raw_providers)) {
@@ -758,9 +935,7 @@ function hybridauth_providers_list($reset = FALSE) {
       }
     }
 
-    //TODO:
-    //$providers = config_get('hybridauth.settings', 'hybridauth_providers');
-    $providers = array();
+    $providers = config_get('hybridauth.settings', 'hybridauth_providers');
     $enabled_providers = array_filter($providers);
     foreach (array_keys($enabled_providers + $raw_providers) as $provider_id) {
       $providers[$provider_id] = $raw_providers[$provider_id];
@@ -842,7 +1017,7 @@ function hybridauth_forms_list() {
  */
 function hybridauth_get_provider_name($provider_id) {
   $providers = hybridauth_providers_list();
-  return isset($providers[$provider_id]) ? $providers[$provider_id] : NULL;
+  return isset($providers[$provider_id]) ? $providers[$provider_id]['name'] : NULL;
 }
 
 /**
@@ -858,7 +1033,7 @@ function hybridauth_get_enabled_providers() {
     $enabled_providers = array_filter(config_get('hybridauth.settings', 'hybridauth_providers'));
 
     foreach (array_keys($enabled_providers) as $provider_id) {
-      $providers[$provider_id] = $all_providers[$provider_id];
+      $providers[$provider_id] = $all_providers[$provider_id]['name'];
     }
   }
 
@@ -901,12 +1076,11 @@ function hybridauth_get_instance() {
  * Returns HybridAuth config.
  */
 function hybridauth_get_config() {
-  $config = config('hybridauth.settings');
   $config = &backdrop_static(__FUNCTION__, NULL);
 
   if (!isset($config)) {
     $logfile = file_directory_temp() . '/hybridauth.debug.log';
-    $hybridauth_debug = $config->get('hybridauth_debug');
+    $hybridauth_debug = config_get('hybridauth.settings', 'hybridauth_debug');
     if ($hybridauth_debug && file_put_contents($logfile, PHP_EOL . 'HYBRIDAUTH DEBUG LOG START' . PHP_EOL . PHP_EOL, FILE_APPEND) === FALSE) {
       watchdog('hybridauth', 'Failed to write to debug log file @logfile.', array('@logfile' => $logfile), WATCHDOG_ERROR);
       $hybridauth_debug = FALSE;
@@ -925,7 +1099,7 @@ function hybridauth_get_config() {
       $config['base_url'] = url('hybridauth/endpoint', array('absolute' => TRUE));
     }
 
-    if ($proxy = $config->get('hybridauth_proxy')) {
+    if ($proxy = config_get('hybridauth.settings', 'hybridauth_proxy')) {
       $config['proxy'] = $proxy;
     }
 
@@ -959,10 +1133,12 @@ function hybridauth_get_provider_config($provider_id) {
     $config['scope'] = array_filter($config['scope']);
   }
 
-  if ($provider = hybridauth_get_provider($provider_id)) {
-    //CTOOLS TODO
-    if (0 && $function = ctools_plugin_get_function($provider, 'configuration_callback')) {
-      $function($config, $provider_id);
+  $provider = hybridauth_get_provider($provider_id);
+  if (!empty($provider)) {
+    require_once BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc';
+    if (!empty($provider[$provider_id]['plugin']['configuration_callback'])) {
+      $function = $provider[$provider_id]['plugin']['configuration_callback'];
+      $function($form, $provider_id);
     }
   }
 
@@ -1016,12 +1192,12 @@ function _hybridauth_add_icon_pack_files($name, &$element) {
     $icon_pack = hybridauth_get_icon_pack($name);
     foreach (array('css', 'js') as $key) {
       if (!empty($icon_pack[$key])) {
-        $element['#attached'][$key][] = $icon_pack['path'] . '/' . $icon_pack[$key];
+        $element['#attached'][$key][] = $icon_pack[$key];
       }
     }
-    //CTOOLS TODO
-    if (0 && $function = ctools_plugin_get_function($icon_pack, 'initialize_callback')) {
-      $function($element);
+    if (!empty($icon_pack['plugin']['initialize_callback'])) {
+      $function = $icon_pack['plugin']['initialize_callback'];
+      $function($form, $provider_id);
     }
   }
 }

@@ -254,11 +254,13 @@ function hybridauth_admin_settings($form, &$form_state) {
   $form['vtabs']['fset_account']['hybridauth_pictures'] = array(
     '#type' => 'checkbox',
     '#title' => t('Save HybridAuth provided picture as user picture'),
-    '#description' => t('Save pictures provided by HybridAuth as user pictures. Check the "Enable user pictures" option at <a href="!link">Account settings</a> to make this option available.',
-      array('!link' => url('admin/config/people/accounts'))),
     '#default_value' => $config->get('hybridauth_pictures'),
-    '#disabled' => !config_get('system.performance', 'user_pictures'),
   );
+  if (!config_get('system.core', 'user_pictures')) {
+    $form['vtabs']['fset_account']['hybridauth_pictures']['#description'] = t('Check the "Enable user pictures" option at <a href="!link">Account settings</a> to make this option available.',
+      array('!link' => url('admin/config/people/settings')));
+    $form['vtabs']['fset_account']['hybridauth_pictures']['#disabled'] = 1;
+  }
   $form['vtabs']['fset_account']['hybridauth_username'] = array(
     '#type' => 'textfield',
     '#title' => t('Username pattern'),

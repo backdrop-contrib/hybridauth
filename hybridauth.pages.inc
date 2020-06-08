@@ -361,7 +361,7 @@ function _hybridauth_window_process_auth($data) {
       $user_email_verify_trigger = FALSE;
       $user_login_trigger = TRUE;
       // Save user picture.
-      if (config_get('system.performance', 'user_pictures') && $config->get('hybridauth_pictures')) {
+      if (config_get('system.core', 'user_pictures') && $config->get('hybridauth_pictures')) {
         $photo_url = $data['photoURL'];
         if (valid_url($photo_url)) {
           $photo = backdrop_http_request($photo_url);

@@ -308,7 +308,7 @@ function _hybridauth_window_process_auth($data) {
   // Create new user account.
   else {
     // Visitors can create accounts.
-    if (($config->get('hybridauth_register') == 0 && config_get('system.performance', 'user_register'))
+    if (($config->get('hybridauth_register') == 0 && config_get('system.core', 'user_register'))
        || $config->get('hybridauth_register') == 1 || $config->get('hybridauth_register') == 2) {
       _hybridauth_invoke_hooks('hybridauth_user_preinsert', $user, $data);
 
@@ -342,7 +342,7 @@ function _hybridauth_window_process_auth($data) {
 
       $admin_approval_required = FALSE;
       // Admin approval is required.
-      if (($config->get('hybridauth_register') == 0 && config_get('system.performance', 'user_register') == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)
+      if (($config->get('hybridauth_register') == 0 && config_get('system.core', 'user_register') == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)
          || $config->get('hybridauth_register') == 2) {
         $userinfo['status'] = 0;
         $admin_approval_required = TRUE;
@@ -389,7 +389,7 @@ function _hybridauth_window_process_auth($data) {
       }
       // Email verification is required.
       elseif (!empty($data['email']) && $data['email'] != $data['emailVerified']
-         && ((!$config->get('hybridauth_email_verification') && config_get('system.performance', 'user_email_verification')) || $config->get('hybridauth_email_verification') == 1)) {
+         && ((!$config->get('hybridauth_email_verification') && config_get('system.core', 'user_email_verification')) || $config->get('hybridauth_email_verification') == 1)) {
         $user_login_trigger = FALSE;
         // Dries birthday timestamp, Nov 19, 1978 = 280281600 :).
         $edit['login'] = 280281600;
@@ -418,7 +418,7 @@ function _hybridauth_window_process_auth($data) {
     }
     // Visitors can't register accounts through HybridAuth.
     elseif ($config->get('hybridauth_register') == 3) {
-      if (config_get('system.performance', 'user_register')) {
+      if (config_get('system.core', 'user_register')) {
         $message = t('Sorry, you are not allowed to login. Please, <a href="@register">create a new account</a>.', array('@register' => url('user/register')));
       }
       else {

@@ -311,6 +311,7 @@ function _hybridauth_window_process_auth($data) {
     if (($config->get('hybridauth_register') == 0 && config_get('system.core', 'user_register'))
        || $config->get('hybridauth_register') == 1 || $config->get('hybridauth_register') == 2) {
       _hybridauth_invoke_hooks('hybridauth_user_preinsert', $user, $data);
+      $account = entity_create('user', array('is_new' => TRUE));
 
       // Check profile information for required fields.
       if ($additional_info = _hybridauth_check_additional_info($data)) {
@@ -347,9 +348,12 @@ function _hybridauth_window_process_auth($data) {
         $userinfo['status'] = 0;
         $admin_approval_required = TRUE;
       }
-      $account = user_save(backdrop_anonymous_user(), $userinfo);
+      foreach($userinfo as $key => $value) {
+        $account->{$key} = $value;
+      }
+      $account_status = user_save($account);
       // Terminate if an error occurred during user_save().
-      if (!$account) {
+      if (!$account_status) {
         backdrop_set_message(t('Error saving user account.'), 'error');
         _hybridauth_window_close();
       }
@@ -391,8 +395,8 @@ function _hybridauth_window_process_auth($data) {
       elseif (!empty($data['email']) && $data['email'] != $data['emailVerified']
          && ((!$config->get('hybridauth_email_verification') && config_get('system.core', 'user_email_verification')) || $config->get('hybridauth_email_verification') == 1)) {
         $user_login_trigger = FALSE;
-        // Dries birthday timestamp, Nov 19, 1978 = 280281600 :).
-        $edit['login'] = 280281600;
+        // Backdrop birthday timestamp, Jan 15, 2015 = 1421301600 :).
+        $edit['login'] = 1421301600;
         $user_save_trigger = TRUE;
         $user_email_verify_trigger = TRUE;
       }
@@ -402,7 +406,10 @@ function _hybridauth_window_process_auth($data) {
         if (module_exists('legal')) {
           $edit['legal_accept'] = NULL;
         }
-        $account = user_save($account, $edit);
+        foreach($edit as $key => $value) {
+          $account->{$key} = $value;
+        }
+        $account_status = user_save($account);
       }
       if ($user_email_verify_trigger) {
         _hybridauth_mail_notify('hybridauth_email_verification', $account);
@@ -871,18 +878,18 @@ function hybridauth_user_identity_delete_validate($form, &$form_state) {
  * @see http://drupal.org/node/1354
  */
 function hybridauth_user_identity_delete_submit($form, &$form_state) {
-  $account = $form['#user'];
+  $account = entity_create('user', $form['#user']);
   $del_identity = $form['#del_identity'];
   $del_identity_data = $form['#del_identity_data'];
   if (!empty($form_state['values']['identity_choice'])) {
     // Change hybridauth data used for tokens.
     $identity = _hybridauth_identity_load_by_id($form_state['values']['identity_choice']);
     $data = unserialize($identity['data']);
-    $edit['data']['hybridauth'] = $data;
+    $account->data['hybridauth'] = $data;
     // Change name.
     // $name = _hybridauth_make_username($data);
-    // $edit['name'] = $name;
-    $account = user_save($account, $edit);
+    // $account->name = $name;
+    user_save($account);
   }
 
   $deleted = _hybridauth_identity_delete_by_id($del_identity['id']);

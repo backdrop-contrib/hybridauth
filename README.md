@@ -55,8 +55,8 @@ Other potential modules:
 
 ## Issues
 
-If you have an issue with any provider not working - please check provider
-documentation at http://hybridauth.sourceforge.net/userguide.html - just click
+If you have an issue with any provider not working - please [check provider
+documentation](https://hybridauth.github.io/hybridauth/userguide.html#index) - just click
 on the provider name and read the instructions related to registering your
 application at the provider's site and configuring this application settings.
 

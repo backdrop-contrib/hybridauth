@@ -22,7 +22,7 @@ function hybridauth_provider_google_configuration_form_callback(&$form, $provide
     . '<p>You must enable <strong>Contacts API</strong> and <strong>Google+ API</strong> for your project at <a href="!apps_uri">!apps_uri</a> under APIs & auth -> APIs.</p>',
     array(
     '!apps_uri' => 'https://console.developers.google.com',
-    '%redirect_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'query' => array('hauth.done' => 'Google'), 'language' => _hybridauth_language_default())),
+    '%redirect_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
     '%origin_uri' => $origin_uri_parts['scheme'] . '://' . $origin_uri_parts['host'],
   )
   );

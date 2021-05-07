@@ -174,16 +174,15 @@ function hybridauth_block_view($delta = '') {
  */
 function hybridauth_user_login(&$edit, $account) {
   if ($hybridauth_session_data = _hybridauth_session_load_by_uid($account->uid)) {
-    if ($hybridauth = hybridauth_get_instance()) {
-      if (is_object($hybridauth)) {
-        $hybridauth_session_data = $hybridauth_session_data['data'];
-        $hybridauth_session_data_current = unserialize($hybridauth->getSessionData());
-        if (is_array($hybridauth_session_data_current)) {
-          $hybridauth_session_data = serialize(array_merge(unserialize($hybridauth_session_data), $hybridauth_session_data_current));
-        }
-        // Call Hybrid_Auth::restoreSessionData() to set stored data.
-        $hybridauth->restoreSessionData($hybridauth_session_data);
-        _hybridauth_session_save($hybridauth_session_data, $account->uid);
+      $hybridauth_session_data = unserialize($hybridauth_session_data['data']);
+      $hybridauth_session_data = is_array($hybridauth_session_data) ? $hybridauth_session_data : array();
+      if (array_key_exists('HYBRIDAUTH::STORAGE', $_SESSION)) {
+        $hybridauth_session_data_current = $_SESSION['HYBRIDAUTH::STORAGE'];
+        $hybridauth_session_data = array_merge($hybridauth_session_data, $hybridauth_session_data_current);
+      }
+      // Call Hybrid_Auth::restoreSessionData() to set stored data.
+      $_SESSION['HYBRIDAUTH::STORAGE'] = $hybridauth_session_data;
+      _hybridauth_session_save(serialize($hybridauth_session_data), $account->uid);
       }
     }
   }
@@ -195,11 +194,9 @@ function hybridauth_user_login(&$edit, $account) {
 function hybridauth_user_logout($account) {
   // Try to get HybridAuth instance.
   if ($hybridauth = hybridauth_get_instance()) {
-    if (is_object($hybridauth)) {
-      // Call Hybrid_Auth::getSessionData() to get stored data.
-      if ($hybridauth_session_data = $hybridauth->getSessionData()) {
-        _hybridauth_session_save($hybridauth_session_data, $account->uid);
-      }
+    // Call Hybrid_Auth::getSessionData() to get stored data.
+    if (array_key_exists('HYBRIDAUTH::STORAGE', $_SESSION)) {
+      _hybridauth_session_save(serialize($_SESSION['HYBRIDAUTH::STORAGE']), $account->uid);
     }
   }
 }
@@ -666,7 +663,7 @@ function hybridauth_get_icon_packs() {
   * Implements hook_hybridauth_get_providers().
   *
   * @param array $ids
-  *   An array of strings representing name(s) of provider(s), or an empty 
+  *   An array of strings representing name(s) of provider(s), or an empty
   *   array to return all providers.
   *
   * @return array
@@ -723,216 +720,19 @@ function hybridauth_providers_list($reset = FALSE) {
   );
 
   if (!isset($providers)) {
-    $raw_providers = array(
-      // Core providers.
-      
-      //TODO: add all plugin info here (as in Google)
-      
-      'Google' => array(
-        'name' => t('Google'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_google_configuration_form_callback',
-          'configuration_callback' => 'hybridauth_provider_google_configuration_callback',
-        ) + $path,
-      ),
-      'Twitter' => array(
-        'name' =>  t('Twitter'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_twitter_configuration_form_callback',
-          'configuration_callback' => 'hybridauth_provider_twitter_configuration_callback',
-        ) + $path,
-      ),
-      'Instagram' => array(
-        'name' =>  t('Instagram'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_instagram_configuration_form_callback',
-        ) + $path,
-      ),
-      'Facebook' => array(
-        'name' =>  t('Facebook'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_facebook_configuration_form_callback',
-          'configuration_callback' => 'hybridauth_provider_facebook_configuration_callback',
-        ) + $path,
-      ),
-      'LinkedIn' => array(
-        'name' =>  t('LinkedIn'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_linkedin_configuration_form_callback',
-        ) + $path,
-      ),
-      'Disqus' => array(
-        'name' =>  t('Disqus'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_disqus_configuration_form_callback',
-        ) + $path,
-      ),
-      'MySpace' => array(
-        'name' =>  t('MySpace'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_myspace_configuration_form_callback',
-        ) + $path,
-      ),
-      'Live' => array(
-        'name' =>  t('Windows Live'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_live_configuration_form_callback',
-        ) + $path,
-      ),
-      'QQ' => array(
-        'name' =>  t('QQ'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_qq_configuration_form_callback',
-        ) + $path,
-      ),
-      'Yahoo' => array(
-        'name' =>  t('Yahoo'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_yahoo_configuration_form_callback',
-        ) + $path,
-      ),
-      'Vkontakte' => array(
-        'name' =>  t('VKontakte'),
-        'plugin' => array(
-          'configuration_form_callback' => 'hybridauth_provider_vkontakte_configuration_form_callback',
-        ) + $path,
-      ),
-      'Paypal' => array(
-        'name' =>  t('Paypal'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'AOL' => array(
-        'name' =>  t('AOL'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Foursquare' => array(
-        'name' =>  t('Foursquare'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'OpenID' => array(
-        'name' =>  t('OpenID'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      // Additional providers.
-      'px500' => array(
-        'name' =>  t('500px'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'FamilySearch' => array(
-        'name' =>  t('FamilySearch'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Geni' => array(
-        'name' =>  t('Geni'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'GitHub' => array(
-        'name' =>  t('GitHub'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Goodreads' => array(
-        'name' =>  t('Goodreads'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'HumanitarianId' => array(
-        'name' =>  t('Humanitarian ID'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Identica' => array(
-        'name' =>  t('Identica'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'LastFM' => array(
-        'name' =>  t('LastFM'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Mailru' => array(
-        'name' =>  t('Mail.ru'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Murmur' => array(
-        'name' =>  t('Murmur'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'MyHeritage' => array(
-        'name' =>  t('MyHeritage'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Odnoklassniki' => array(
-        'name' =>  t('Odnoklassniki'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Pixnet' => array(
-        'name' =>  t('Pixnet'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Plurk' => array(
-        'name' =>  t('Plurk'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Sina' => array(
-        'name' =>  t('Sina'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Skyrock' => array(
-        'name' =>  t('Skyrock'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Steam' => array(
-        'name' =>  t('Steam'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Tumblr' => array(
-        'name' =>  t('Tumblr'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'TwitchTV' => array(
-        'name' =>  t('Twitch.tv'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Viadeo' => array(
-        'name' =>  t('Viadeo'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Vimeo' => array(
-        'name' =>  t('Vimeo'),
-        'plugin' => array(
-        ) + $path,
-      ),
-      'Yandex' => array(
-        'name' =>  t('Yandex'),
-        'plugin' => array(
-        ) + $path,
-      ),
-    );
+    $raw_providers = array();
     foreach (hybridauth_providers_files($reset) as $name => $file) {
-      if (!array_key_exists($name, $raw_providers)) {
-        $raw_providers[$name] = t($name);
+      $lowercase_name = strtolower($name);
+      $plugin = array() + $path;
+      if (function_exists('hybridauth_provider_' . $lowercase_name . '_configuration_form_callback')) {
+        $plugin['configuration_form_callback'] = 'hybridauth_provider_' . $lowercase_name . '_configuration_form_callback';
       }
+      if (function_exists('hybridauth_provider_' . $lowercase_name . '_configuration_callback')) {
+        $plugin['configuration_callback'] = 'hybridauth_provider_' . $lowercase_name . '_configuration_callback';
+      }
+      $raw_providers[$name] = array(
+        'name' => t($name),
+      );
     }
 
     $providers = config_get('hybridauth.settings', 'hybridauth_providers');
@@ -960,7 +760,7 @@ function hybridauth_providers_files($reset = FALSE) {
 
   // Scan Providers directory if $reset == TRUE or there was no cached value.
   if (empty($files)) {
-    $files = file_scan_directory(_hybridauth_library_path() . '/Hybrid/Providers', '/\.php$/', array('key' => 'name'));
+    $files = file_scan_directory(_hybridauth_library_path() . '/Provider', '/\.php$/', array('key' => 'name'));
     cache_set('hybridauth_providers_files', $files, 'cache', CACHE_TEMPORARY);
   }
   return $files;
@@ -1044,23 +844,18 @@ function hybridauth_get_enabled_providers() {
  * Returns HybridAuth object or exception code.
  */
 function hybridauth_get_instance() {
-  $controller = &backdrop_static(__FUNCTION__, NULL);
+  $controller = &backdrop_static(__FUNCTION__);
 
   if (!isset($controller)) {
     $controller = FALSE;
 
     if ($lib_path = _hybridauth_library_path()) {
-      // If Composer install was executed in the Hybridauth library use that
-      // autoloader.
-      if (file_exists($lib_path . '/../vendor/autoload.php')) {
-        require_once $lib_path . '/../vendor/autoload.php';
-      }
-      else {
-        require_once $lib_path . '/Hybrid/Auth.php';
+      if (file_exists($lib_path . '/autoload.php')) {
+        require_once $lib_path . '/autoload.php';
       }
       $config = hybridauth_get_config();
       try {
-        $controller = new Hybrid_Auth($config);
+        $controller = new Hybridauth\Hybridauth($config);
       }
       catch (Exception $e) {
         watchdog_exception('hybridauth', $e);
@@ -1070,6 +865,27 @@ function hybridauth_get_instance() {
   }
 
   return $controller;
+}
+
+/**
+ * Returns HybridAuth storage.
+ */
+function hybridauth_get_storage() {
+  $storage = &backdrop_static(__FUNCTION__);
+
+  if (!isset($storage)) {
+    $storage = FALSE;
+
+    try {
+      $storage = new Hybridauth\Storage\Session();
+    }
+    catch(Exception $e) {
+      watchdog_exception('hybridauth', $e);
+      $storage = $e->getCode();
+    }
+  }
+
+  return $storage;
 }
 
 /**
@@ -1087,7 +903,7 @@ function hybridauth_get_config() {
     }
 
     $config = array(
-      'base_url' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
+      'callback' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
       'providers' => array(),
       'debug_mode' => $hybridauth_debug,
       'debug_file' => $logfile,
@@ -1096,7 +912,7 @@ function hybridauth_get_config() {
     // Special case Facebook: we need to provide a language-aware base URL
     // because otherwise there is a redirect_uri mismatch in the Facebook SDK.
     if ($_GET['q'] === 'hybridauth/window/Facebook') {
-      $config['base_url'] = url('hybridauth/endpoint', array('absolute' => TRUE));
+      $config['callback'] = url('hybridauth/endpoint', array('absolute' => TRUE));
     }
 
     if ($proxy = config_get('hybridauth.settings', 'hybridauth_proxy')) {
@@ -1169,13 +985,9 @@ function hybridauth_get_connected_providers() {
  */
 function _hybridauth_library_path() {
 
-  $library_path = backdrop_get_path('module', 'hybridauth') . '/library/hybridauth';
+  $library_path = backdrop_get_path('module', 'hybridauth') . '/library/src';
 
-  // Check for the /Hybrid/Auth.php file.
-  if (file_exists($library_path . '/Hybrid/Auth.php')) {
-  }
-  elseif (file_exists($library_path . '/hybridauth/Hybrid/Auth.php')) {
-    $library_path .= '/hybridauth';
+  if (file_exists($library_path . '/autoload.php')) {
   }
   else {
     watchdog('hybridauth', 'HybridAuth library is missing.', array(), WATCHDOG_ERROR);

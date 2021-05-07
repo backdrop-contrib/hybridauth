@@ -5,14 +5,6 @@
  */
 
 /**
- * Plugin declaration.
- */
-$plugin = array(
-  'configuration_form_callback' => 'hybridauth_provider_backdropoauth2_configuration_form_callback',
-  'configuration_callback' => 'hybridauth_provider_backdropoauth2_configuration_callback',
-);
-
-/**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
  */
@@ -24,7 +16,7 @@ function hybridauth_provider_backdropoauth2_configuration_form_callback(&$form, 
     . 'On the server you must set the <strong>Redirect URI</strong> of the client to:<br/>'
     . '<strong>%redirect_uri</strong></p>',
     array(
-    '%redirect_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'query' => array('hauth.done' => 'BackdropOAuth2'), 'language' => _hybridauth_language_default())),
+    '%redirect_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
   )
   );
 

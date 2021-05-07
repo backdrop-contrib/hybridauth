@@ -5,14 +5,6 @@
  */
 
 /**
- * Plugin declaration.
- */
-$plugin = array(
-  'configuration_form_callback' => 'hybridauth_provider_pinterest_configuration_form_callback',
-  'configuration_callback' => 'hybridauth_provider_pinterest_configuration_callback',
-);
-
-/**
  * Callback for provider's configuration form.
  *
  * @param  array $form

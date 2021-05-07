@@ -5,14 +5,6 @@
  */
 
 /**
- * Plugin declaration.
- */
-$plugin = array(
-  'configuration_form_callback' => 'hybridauth_provider_esia_configuration_form_callback',
-  'configuration_callback' => 'hybridauth_provider_esia_configuration_callback',
-);
-
-/**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
  */

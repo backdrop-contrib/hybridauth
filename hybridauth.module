@@ -723,6 +723,10 @@ function hybridauth_providers_list($reset = FALSE) {
     foreach (hybridauth_providers_files($reset) as $name => $file) {
       $lowercase_name = strtolower($name);
       $plugin = array() + $path;
+      $default_plugin_file = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'hybridauth') . '/plugins/provider/' . $name . '/' . $name . '.inc';
+      if (file_exists($default_plugin_file)) {
+        require_once $default_plugin_file;
+      }
       if (function_exists('hybridauth_provider_' . $lowercase_name . '_configuration_form_callback')) {
         $plugin['configuration_form_callback'] = 'hybridauth_provider_' . $lowercase_name . '_configuration_form_callback';
       }
@@ -734,7 +738,6 @@ function hybridauth_providers_list($reset = FALSE) {
         'plugin' => $plugin,
       );
     }
-
     $providers = config_get('hybridauth.settings', 'hybridauth_providers');
     $enabled_providers = array_filter($providers);
     foreach (array_keys($enabled_providers + $raw_providers) as $provider_id) {

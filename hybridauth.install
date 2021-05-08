@@ -5,61 +5,6 @@
  */
 
 /**
- * Implements hook_uninstall().
- */
-function hybridauth_uninstall() {
-  module_load_include('module', 'hybridauth');
-  foreach (hybridauth_providers_list() as $provider_id => $provider_name) {
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_keys_id');
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_keys_key');
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_keys_secret');
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_window_type');
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_window_width');
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_window_height');
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_display');
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_scope');
-    // Legacy variables.
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_enabled');
-    config_clear('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_weight');
-  }
-
-  config_clear('hybridauth.settings', 'hybridauth_providers');
-  config_clear('hybridauth.settings', 'hybridauth_library_path');
-  config_clear('hybridauth.settings', 'hybridauth_required_fields');
-  config_clear('hybridauth.settings', 'hybridauth_widget_title');
-  config_clear('hybridauth.settings', 'hybridauth_widget_type');
-  config_clear('hybridauth.settings', 'hybridauth_widget_use_overlay');
-  config_clear('hybridauth.settings', 'hybridauth_widget_link_text');
-  config_clear('hybridauth.settings', 'hybridauth_widget_link_title');
-  config_clear('hybridauth.settings', 'hybridauth_widget_icon_pack');
-  config_clear('hybridauth.settings', 'hybridauth_widget_weight');
-  config_clear('hybridauth.settings', 'hybridauth_widget_hide_links');
-  config_clear('hybridauth.settings', 'hybridauth_disable_username_change');
-  config_clear('hybridauth.settings', 'hybridauth_remove_password_fields');
-  config_clear('hybridauth.settings', 'hybridauth_pictures');
-  config_clear('hybridauth.settings', 'hybridauth_register');
-  config_clear('hybridauth.settings', 'hybridauth_email_verification');
-  config_clear('hybridauth.settings', 'hybridauth_email_verification_body');
-  config_clear('hybridauth.settings', 'hybridauth_email_verification_subject');
-  config_clear('hybridauth.settings', 'hybridauth_username');
-  config_clear('hybridauth.settings', 'hybridauth_registration_username_change');
-  config_clear('hybridauth.settings', 'hybridauth_registration_password');
-  config_clear('hybridauth.settings', 'hybridauth_display_name');
-  config_clear('hybridauth.settings', 'hybridauth_override_realname');
-  config_clear('hybridauth.settings', 'hybridauth_destination');
-  config_clear('hybridauth.settings', 'hybridauth_destination_error');
-  config_clear('hybridauth.settings', 'hybridauth_forms');
-  config_clear('hybridauth.settings', 'hybridauth_duplicate_emails');
-  config_clear('hybridauth.settings', 'hybridauth_proxy');
-  config_clear('hybridauth.settings', 'hybridauth_debug');
-
-  // Legacy variables.
-  config_clear('hybridauth.settings', 'hybridauth_registration_role_choice');
-  config_clear('hybridauth.settings', 'hybridauth_registration_roles');
-  config_clear('hybridauth.settings', 'hybridauth_window_type');
-}
-
-/**
  * Implements hook_requirements().
  */
 function hybridauth_requirements($phase) {
@@ -71,10 +16,10 @@ function hybridauth_requirements($phase) {
   if ($phase == 'install' || $phase == 'runtime') {
     if ($lib_path = _hybridauth_library_path()) {
       try {
-        require_once $lib_path . '/Hybrid/Auth.php';
+        require_once $lib_path . '/autoload.php';
         $requirements['hybridauth'] = array(
           'title' => $t('HybridAuth library'),
-          'value' => Hybrid_Auth::$version,
+          'value' => '3.7.1',
           'severity' => REQUIREMENT_OK,
         );
       }

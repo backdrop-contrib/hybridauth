@@ -450,6 +450,7 @@ function hybridauth_admin_settings_validate($form, &$form_state) {
  * @ingroup forms
  */
 function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = NULL) {
+  $provider_id = strtolower($provider_id);
   $config = config('hybridauth.settings');
   $form['#config'] = 'hybridauth.settings';
   $form['vtabs'] = array(

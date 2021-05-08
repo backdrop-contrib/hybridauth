@@ -1,6 +1,6 @@
 # HybridAuth for Backdrop
 
-HybridAuth Social Login bundles the HybridAuth library (v2.17.0) and allows
+HybridAuth Social Login bundles the HybridAuth library (v3.7.1) and allows
 your Backdrop site users to login and register using:
 
  - Facebook
@@ -12,21 +12,21 @@ your Backdrop site users to login and register using:
  - Foursquare
  - AOL
  - OpenID
- - Github, LastFM, PayPal, Vimeo, Disqus, Instagram, Tumblr, Vkontakte, 
+ - Github, LastFM, PayPal, Vimeo, Disqus, Instagram, Tumblr, Vkontakte,
    Mail.ru, Yandex, Odnoklassniki, Twitch.tv, Steam and more.
 
 ### Advantages
 
  - Doesn't depend on any external service
  - Doesn't load any external CSS or JS files - blazingly fast widget rendering
- - Relies on third-party open source PHP library HybridAuth (provides 
-   communication with authentication providers; no need to support them in 
-   the module code) developed and supported on GitHub by broad community 
+ - Relies on third-party open source PHP library HybridAuth (provides
+   communication with authentication providers; no need to support them in
+   the module code) developed and supported on GitHub by broad community
    of contributors
 
 ## Installation
 
-- Install this module using the official 
+- Install this module using the official
   [Backdrop CMS instructions](https://backdropcms.org/guide/modules)
 
 ## Usage
@@ -60,7 +60,7 @@ documentation](https://hybridauth.github.io/hybridauth/userguide.html#index) - j
 on the provider name and read the instructions related to registering your
 application at the provider's site and configuring this application settings.
 
-Bugs and Feature requests should be reported in the 
+Bugs and Feature requests should be reported in the
 [Issue Queue](https://github.com/backdrop-contrib/hybridauth/issues)
 
 ## Current Maintainers

@@ -235,9 +235,10 @@ function hybridauth_form_comment_form_alter(&$form, &$form_state, $form_id) {
  */
 function hybridauth_config_info() {
   $prefixes['hybridauth.settings'] = array(
-    'label' => t('Module name settings'),
+    'label' => t('HybridAuth settings'),
     'group' => t('Configuration'),
   );
+  return $prefixes;
 }
 
 /**
@@ -730,6 +731,7 @@ function hybridauth_providers_list($reset = FALSE) {
       }
       $raw_providers[$name] = array(
         'name' => t($name),
+        'plugin' => $plugin,
       );
     }
 
@@ -739,6 +741,7 @@ function hybridauth_providers_list($reset = FALSE) {
       $providers[$provider_id] = $raw_providers[$provider_id];
     }
   }
+  ksort($providers);
 
   return $providers;
 }

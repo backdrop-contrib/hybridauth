@@ -174,17 +174,15 @@ function hybridauth_block_view($delta = '') {
  */
 function hybridauth_user_login(&$edit, $account) {
   if ($hybridauth_session_data = _hybridauth_session_load_by_uid($account->uid)) {
-      $hybridauth_session_data = unserialize($hybridauth_session_data['data']);
-      $hybridauth_session_data = is_array($hybridauth_session_data) ? $hybridauth_session_data : array();
-      if (array_key_exists('HYBRIDAUTH::STORAGE', $_SESSION)) {
-        $hybridauth_session_data_current = $_SESSION['HYBRIDAUTH::STORAGE'];
-        $hybridauth_session_data = array_merge($hybridauth_session_data, $hybridauth_session_data_current);
-      }
-      // Call Hybrid_Auth::restoreSessionData() to set stored data.
-      $_SESSION['HYBRIDAUTH::STORAGE'] = $hybridauth_session_data;
-      _hybridauth_session_save(serialize($hybridauth_session_data), $account->uid);
-      }
+    $hybridauth_session_data = unserialize($hybridauth_session_data['data']);
+    $hybridauth_session_data = is_array($hybridauth_session_data) ? $hybridauth_session_data : array();
+    if (array_key_exists('HYBRIDAUTH::STORAGE', $_SESSION)) {
+      $hybridauth_session_data_current = $_SESSION['HYBRIDAUTH::STORAGE'];
+      $hybridauth_session_data = array_merge($hybridauth_session_data, $hybridauth_session_data_current);
     }
+    // Call Hybrid_Auth::restoreSessionData() to set stored data.
+    $_SESSION['HYBRIDAUTH::STORAGE'] = $hybridauth_session_data;
+    _hybridauth_session_save(serialize($hybridauth_session_data), $account->uid);
   }
 }
 

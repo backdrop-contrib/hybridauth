@@ -258,7 +258,7 @@ function _hybridauth_form_alter(&$form, &$form_state, $form_id) {
  */
 function hybridauth_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
   $config = config('hybridauth.settings');
-  if ($form['#user_category'] == 'account' && !empty($form['#user']->data['hybridauth'])) {
+  if ($form['#form_id'] == 'user_profile_form' && !empty($form['#user']->data['hybridauth'])) {
     if ($form['account']['name']['#access'] && $config->get('hybridauth_disable_username_change')) {
       $form['account']['name']['#access'] = FALSE;
     }

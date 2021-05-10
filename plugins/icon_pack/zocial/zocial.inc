@@ -18,8 +18,6 @@ $plugin = array(
  * @see http://drupal.org/node/1354
  */
 function hybridauth_zocial_icon_classes_callback(&$classes, $provider_id) {
-  dpm($classes);
-  dpm($provider_id);
   $additional_classes = array('zocial', 'icon');
   if ($provider_id == 'Vkontakte') {
     $additional_classes[] = 'vk';

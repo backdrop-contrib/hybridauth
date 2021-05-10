@@ -16,7 +16,7 @@ function hybridauth_admin_settings($form, &$form_state) {
   $config = config('hybridauth.settings');
   if ($config->get('hybridauth_register') == 0 && config_get('system.performance', 'user_register') == USER_REGISTER_ADMINISTRATORS_ONLY) {
     backdrop_set_message(t('Currently only administrators can create new user accounts. Either change the "Who can register accounts?" option under "Account settings" tab or at the core <a href="!link">Account settings</a>.',
-      array('!link' => url('admin/config/people/accounts'))), 'warning');
+      array('!link' => url('admin/config/people/settings'))), 'warning');
   }
 
   $form['#config'] = 'hybridauth.settings';
@@ -201,7 +201,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     ),
     '#description' => t('Select who can register accounts through HybridAuth.') . ' '
       . t('The core settings are available at <a href="!link">Account settings</a>.',
-        array('!link' => url('admin/config/people/accounts'))),
+        array('!link' => url('admin/config/people/settings'))),
     '#default_value' => $config->get('hybridauth_register'),
   );
   $core_settings = array(
@@ -218,7 +218,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     ),
     '#description' => t("Select how to handle not verified e-mail addresses (authentication provider gives non-verified e-mail address or doesn't provide one at all).") . ' '
       . t('The core settings are available at <a href="!link">Account settings</a>.',
-        array('!link' => url('admin/config/people/accounts'))),
+        array('!link' => url('admin/config/people/settings'))),
     '#default_value' => $config->get('hybridauth_email_verification'),
   );
   // E-mail address verification template.
@@ -305,7 +305,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#description' => t('Override <a href="!link1">Real name settings</a> using the above display name pattern for users created by HybridAuth. This option is available only if !link2 module is installed.',
       array(
       '!link1' => url('admin/config/people/realname'),
-      '!link2' => l(t('Real name'), 'http://drupal.org/project/realname', array('attributes' => array('target' => '_blank'))),
+      '!link2' => l(t('Real name'), 'https://backdropcms.org/project/realname', array('attributes' => array('target' => '_blank'))),
     )),
     '#default_value' => $config->get('hybridauth_override_realname'),
     '#disabled' => !module_exists('realname'),

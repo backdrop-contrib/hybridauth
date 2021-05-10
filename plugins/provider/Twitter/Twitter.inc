@@ -5,8 +5,15 @@
  */
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the provider settings form.
+ *
+ * @param array $form
+ *    Settings form as a render array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified render array for the provider settings form (by reference).
  */
 function hybridauth_provider_twitter_configuration_form_callback(&$form, $provider_id) {
   unset($form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_id']);
@@ -15,7 +22,7 @@ function hybridauth_provider_twitter_configuration_form_callback(&$form, $provid
     . '<p>You must set <strong>Callback URL</strong> to <strong>%callback_uri</strong>.</p>',
     array(
     '!apps_uri' => 'https://dev.twitter.com/apps',
-    '%callback_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'query' => array('hauth.done' => 'Twitter'), 'language' => _hybridauth_language_default())),
+    '%callback_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
   )
   );
   $form['vtabs']['advanced'] = array(
@@ -30,8 +37,15 @@ function hybridauth_provider_twitter_configuration_form_callback(&$form, $provid
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the default provider configuration.
+ *
+ * @param array $config
+ *    Config data as a keyed array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified config array for the provider configuration (by reference).
  */
 function hybridauth_provider_twitter_configuration_callback(&$config, $provider_id) {
   $config['includeEmail'] = config_get('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_includeEmail');

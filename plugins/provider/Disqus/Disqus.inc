@@ -5,15 +5,15 @@
  */
 
 /**
- * Plugin declaration.
- */
-$plugin = array(
-  'configuration_form_callback' => 'hybridauth_provider_disqus_configuration_form_callback',
-);
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the provider settings form.
+ *
+ * @param array $form
+ *    Settings form as a render array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified render array for the provider settings form (by reference).
  */
 function hybridauth_provider_disqus_configuration_form_callback(&$form, $provider_id) {
   unset($form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_key']);
@@ -24,7 +24,7 @@ function hybridauth_provider_disqus_configuration_form_callback(&$form, $provide
     . '<p>You must set <strong>CallBack URL</strong> to <strong>%redirect_uri</strong>.</p>',
     array(
     '!apps_uri' => 'https://disqus.com/api/applications/',
-    '%redirect_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'query' => array('hauth.done' => 'Discus'), 'language' => _hybridauth_language_default())),
-  )
+    '%redirect_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
+    )
   );
 }

@@ -449,7 +449,8 @@ function hybridauth_admin_settings_validate($form, &$form_state) {
  *
  * @ingroup forms
  */
-function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = NULL) {
+function hybridauth_admin_provider_settings($form, &$form_state, $provider_name = NULL) {
+  $provider_id = strtolower($provider_name);
   $config = config('hybridauth.settings');
   $form['#config'] = 'hybridauth.settings';
   $form['vtabs'] = array(
@@ -534,13 +535,13 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
     '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_window_height'),
   ) + $base;
 
-  $provider = hybridauth_get_provider($provider_id);
+  $provider = hybridauth_get_provider($provider_name);
   if (!empty($provider)) {
-    if (file_exists(BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc')) {
-      require_once BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc';
+    if (file_exists(BACKDROP_ROOT . '/' . $provider[$provider_name]['plugin']['path'] . '/plugins/provider/' . $provider_name . '/' . $provider_name . '.inc')) {
+      require_once BACKDROP_ROOT . '/' . $provider[$provider_name]['plugin']['path'] . '/plugins/provider/' . $provider_name . '/' . $provider_name . '.inc';
     }
-    if (!empty($provider[$provider_id]['plugin']['configuration_form_callback'])) {
-      $function = $provider[$provider_id]['plugin']['configuration_form_callback'];
+    if (!empty($provider[$provider_name]['plugin']['configuration_form_callback'])) {
+      $function = $provider[$provider_name]['plugin']['configuration_form_callback'];
       $function($form, $provider_id);
     }
   }

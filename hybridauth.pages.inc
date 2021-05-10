@@ -14,19 +14,19 @@ function hybridauth_endpoint() {
 
   if ($lib_path = _hybridauth_library_path()) {
     try {
-      // If Composer install was executed in the Hybridauth library use that
-      // autoloader.
-      if (file_exists($lib_path . '/../vendor/autoload.php')) {
-        require_once $lib_path . '/../vendor/autoload.php';
+      if (file_exists($lib_path . '/autoload.php')) {
+        require_once $lib_path . '/autoload.php';
       }
-      require_once $lib_path . '/index.php';
+      //require_once $lib_path . '/index.php';
     }
     catch (Exception $e) {
       watchdog_exception('hybridauth', $e);
     }
+    if ($storage = hybridauth_get_storage()) {
+      //dpm_watchdog(['endpoint' => $storage->get('provider')]);
+      hybridauth_window_start($storage->get('provider'));
+    }
   }
-
-  return MENU_ACCESS_DENIED;
 }
 
 /**
@@ -99,28 +99,15 @@ function _hybridauth_window_close($redirect = TRUE) {
   // Prevent devel module from spewing.
   $GLOBALS['devel_shutdown'] = FALSE;
 
-  $destination = backdrop_get_destination();
-  $destination = $destination['destination'];
-  // Check if token replacements are allowed for the destination string.
-  if (_hybridauth_allow_token_replace($destination)) {
-    $destination = token_replace($destination, array('user' => $user), array('clear' => TRUE));
-  }
+  $destination = config_get('hybridauth.settings', 'hybridauth_destination');
   $destination_error = !empty($_GET['destination_error']) ? $_GET['destination_error'] : config_get('hybridauth.settings', 'hybridauth_destination_error');
 
-  $base_options = array(
-    'absolute' => TRUE,
-    // The redirect target must never be an external URL to prevent open
-    // redirect vulnerabilities.
-    'external' => FALSE,
-  );
-  $destination_options = backdrop_parse_url($destination) + $base_options;
-  $destination_error_options = backdrop_parse_url($destination_error) + $base_options;
+  // Check if token replacements are allowed for the destination string.
+  $destination = token_replace($destination, array('user' => $user), array('clear' => TRUE));
+  $destination_error = token_replace($destination_error, array('user' => $user), array('clear' => TRUE));
 
-  backdrop_alter('hybridauth_destination_options', $destination_options);
-  backdrop_alter('hybridauth_destination_error_options', $destination_error_options);
-
-  $destination = url($destination_options['path'], $destination_options);
-  $destination_error = url($destination_error_options['path'], $destination_error_options);
+  $destination = url($destination);
+  $destination_error = url($destination_error);
 
   backdrop_add_js(array(
     'hybridauth' => array(
@@ -147,14 +134,12 @@ function _hybridauth_window_close($redirect = TRUE) {
 function _hybridauth_window_auth($hybridauth, $provider_id) {
   $error_code = NULL;
   if (is_object($hybridauth)) {
-    $params = array(
-      'hauth_return_to' => url('hybridauth/window/' . $provider_id, array('absolute' => TRUE, 'query' => backdrop_get_query_parameters())),
-    );
-    if (isset($_GET['openid_identifier'])) {
-      $params['openid_identifier'] = $_GET['openid_identifier'];
+    // Set provider for hybridauth.
+    if ($storage = hybridauth_get_storage()) {
+      $storage->set('provider', $provider_id);
     }
     try {
-      $adapter = $hybridauth->authenticate($provider_id, $params);
+      $adapter = $hybridauth->authenticate($provider_id);
       $profile = (array) ($adapter->getUserProfile());
     }
     catch (Exception $e) {
@@ -173,7 +158,7 @@ function _hybridauth_window_auth($hybridauth, $provider_id) {
       // Delete session only if it contains just HybridAuth data.
       $delete_session = TRUE;
       foreach ($_SESSION as $key => $value) {
-        if (substr($key, 0, 4) != 'HA::') {
+        if ($key !== 'HYBRIDAUTH::STORAGE') {
           $delete_session = FALSE;
         }
       }
@@ -901,7 +886,7 @@ function hybridauth_user_identity_delete_submit($form, &$form_state) {
   if ($hybridauth = hybridauth_get_instance()) {
     if (is_object($hybridauth)) {
       $adapter = $hybridauth->getAdapter($del_identity['provider']);
-      $adapter->logout();
+      $adapter->disconnect();
     }
   }
 

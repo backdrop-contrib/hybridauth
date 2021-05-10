@@ -5,16 +5,15 @@
  */
 
 /**
- * Plugin declaration.
- */
-$plugin = array(
-  'configuration_form_callback' => 'hybridauth_provider_backdropoauth2_configuration_form_callback',
-  'configuration_callback' => 'hybridauth_provider_backdropoauth2_configuration_callback',
-);
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the provider settings form.
+ *
+ * @param array $form
+ *    Settings form as a render array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified render array for the provider settings form (by reference).
  */
 function hybridauth_provider_backdropoauth2_configuration_form_callback(&$form, $provider_id) {
   $config = config('hybridauth.settings');
@@ -24,7 +23,7 @@ function hybridauth_provider_backdropoauth2_configuration_form_callback(&$form, 
     . 'On the server you must set the <strong>Redirect URI</strong> of the client to:<br/>'
     . '<strong>%redirect_uri</strong></p>',
     array(
-    '%redirect_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'query' => array('hauth.done' => 'BackdropOAuth2'), 'language' => _hybridauth_language_default())),
+    '%redirect_uri' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
   )
   );
 
@@ -62,8 +61,15 @@ function hybridauth_provider_backdropoauth2_configuration_form_callback(&$form, 
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the default provider configuration.
+ *
+ * @param array $config
+ *    Config data as a keyed array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified config array for the provider configuration (by reference).
  */
 function hybridauth_provider_backdropoauth2_configuration_callback(&$config, $provider_id) {
   $config = config('hybridauth.settings');

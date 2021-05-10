@@ -5,20 +5,15 @@
  */
 
 /**
- * Plugin declaration.
- */
-$plugin = array(
-  'configuration_form_callback' => 'hybridauth_provider_pinterest_configuration_form_callback',
-  'configuration_callback' => 'hybridauth_provider_pinterest_configuration_callback',
-);
-
-/**
- * Callback for provider's configuration form.
+ * Make adjustments to the provider settings form.
  *
- * @param  array $form
- *   Form data.
- * @param  string $provider_id
- *   Provider name.
+ * @param array $form
+ *    Settings form as a render array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified render array for the provider settings form (by reference).
  */
 function hybridauth_provider_pinterest_configuration_form_callback(&$form, $provider_id) {
   $apps_uri = 'https://developers.pinterest.com/apps/';
@@ -61,12 +56,15 @@ function hybridauth_provider_pinterest_configuration_form_callback(&$form, $prov
 }
 
 /**
- * Set default permission scopes.
+ * Make adjustments to the default provider configuration.
  *
- * @param  array $config
- *   Configuration data.
- * @param  string $provider_id
- *   Provider name.
+ * @param array $config
+ *    Config data as a keyed array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified config array for the provider configuration (by reference).
  */
 function hybridauth_provider_pinterest_configuration_callback(&$config, $provider_id) {
   if (empty($config['scope'])) {

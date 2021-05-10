@@ -720,21 +720,21 @@ function hybridauth_providers_list($reset = FALSE) {
 
   if (!isset($providers)) {
     $raw_providers = array();
-    foreach (hybridauth_providers_files($reset) as $name => $file) {
-      $lowercase_name = strtolower($name);
+    foreach (hybridauth_providers_files($reset) as $provider_name => $file) {
+      $provider_id = strtolower($provider_name);
       $plugin = array();
-      $default_plugin_file = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'hybridauth') . '/plugins/provider/' . $name . '/' . $name . '.inc';
+      $default_plugin_file = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'hybridauth') . '/plugins/provider/' . $provider_name . '/' . $provider_name . '.inc';
       if (file_exists($default_plugin_file)) {
         require_once $default_plugin_file;
       }
-      if (function_exists('hybridauth_provider_' . $lowercase_name . '_configuration_form_callback')) {
-        $plugin['configuration_form_callback'] = 'hybridauth_provider_' . $lowercase_name . '_configuration_form_callback';
+      if (function_exists('hybridauth_provider_' . $provider_id . '_configuration_form_callback')) {
+        $plugin['configuration_form_callback'] = 'hybridauth_provider_' . $provider_id . '_configuration_form_callback';
       }
-      if (function_exists('hybridauth_provider_' . $lowercase_name . '_configuration_callback')) {
-        $plugin['configuration_callback'] = 'hybridauth_provider_' . $lowercase_name . '_configuration_callback';
+      if (function_exists('hybridauth_provider_' . $provider_id . '_configuration_callback')) {
+        $plugin['configuration_callback'] = 'hybridauth_provider_' . $provider_id . '_configuration_callback';
       }
-      $raw_providers[$name] = array(
-        'name' => t($name),
+      $raw_providers[$provider_name] = array(
+        'name' => t($provider_name),
         'plugin' => $plugin + $path,
       );
     }
@@ -936,16 +936,17 @@ function hybridauth_get_config() {
  * Returns provider config.
  */
 function hybridauth_get_provider_config($provider_id) {
+  $lowercase_provider_id = strtolower($provider_id);
   $config = config('hybridauth.settings');
   $provider_config = array(
     'enabled' => array_key_exists($provider_id, array_filter($config->get('hybridauth_providers'))),
     'keys' => array(
-      'id' => trim($config->get('hybridauth_provider_' . $provider_id . '_keys_id')),
-      'key' => trim($config->get('hybridauth_provider_' . $provider_id . '_keys_key')),
-      'secret' => trim($config->get('hybridauth_provider_' . $provider_id . '_keys_secret')),
+      'id' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_id')),
+      'key' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_key')),
+      'secret' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_secret')),
     ),
-    'scope' => $config->get('hybridauth_provider_' . $provider_id . '_scope'),
-    'display' => $config->get('hybridauth_provider_' . $provider_id . '_display'),
+    'scope' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_scope'),
+    'display' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_display'),
     'hauth_return_to' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
   );
   if (is_array($provider_config['scope'])) {
@@ -957,7 +958,7 @@ function hybridauth_get_provider_config($provider_id) {
     require_once BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc';
     if (!empty($provider[$provider_id]['plugin']['configuration_callback'])) {
       $function = $provider[$provider_id]['plugin']['configuration_callback'];
-      $function($form, $provider_id);
+      $function($provider_config, $provider_id);
     }
   }
 

@@ -5,8 +5,15 @@
  */
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the provider settings form.
+ *
+ * @param array $form
+ *    Settings form as a render array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified render array for the provider settings form (by reference).
  */
 function hybridauth_provider_facebook_configuration_form_callback(&$form, $provider_id) {
   $config = config('hybridauth.settings');
@@ -59,8 +66,15 @@ function hybridauth_provider_facebook_configuration_form_callback(&$form, $provi
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the default provider configuration.
+ *
+ * @param array $config
+ *    Config data as a keyed array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified config array for the provider configuration (by reference).
  */
 function hybridauth_provider_facebook_configuration_callback(&$config, $provider_id) {
   if (empty($config['scope'])) {
@@ -70,8 +84,7 @@ function hybridauth_provider_facebook_configuration_callback(&$config, $provider
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Provide a default scope.
  */
 function hybridauth_provider_facebook_scope_default() {
   return 'public_profile,email';

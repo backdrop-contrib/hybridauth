@@ -5,8 +5,15 @@
  */
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the provider settings form.
+ *
+ * @param array $form
+ *    Settings form as a render array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified render array for the provider settings form (by reference).
  */
 function hybridauth_provider_digitalocean_configuration_form_callback(&$form, $provider_id) {
   $app_settings = &$form['vtabs']['application'];
@@ -38,8 +45,15 @@ function hybridauth_provider_digitalocean_configuration_form_callback(&$form, $p
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Make adjustments to the default provider configuration.
+ *
+ * @param array $config
+ *    Config data as a keyed array.
+ * @param string $provider_id
+ *    Lowercase provider id value.
+ *
+ * @return
+ *    A modified config array for the provider configuration (by reference).
  */
 function hybridauth_provider_digitalocean_configuration_callback(&$config, $provider_id) {
   $config['scope'] = config_get('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_scope');

@@ -450,7 +450,7 @@ function hybridauth_admin_settings_validate($form, &$form_state) {
  * @ingroup forms
  */
 function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = NULL) {
-  $provider_id = strtolower($provider_id);
+  $lowercase_provider_id = strtolower($provider_id);
   $config = config('hybridauth.settings');
   $form['#config'] = 'hybridauth.settings';
   $form['vtabs'] = array(
@@ -462,23 +462,23 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
     '#title' => t('Application settings'),
     '#description' => t('Enter the application ID, consumer key, and/or secret key as required.'),
   );
-  $form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_id'] = array(
+  $form['vtabs']['application']['hybridauth_provider_' . $lowercase_provider_id . '_keys_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Application ID'),
     '#description' => t('The application ID.'),
-    '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_keys_id'),
+    '#default_value' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_id'),
   );
-  $form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_key'] = array(
+  $form['vtabs']['application']['hybridauth_provider_' . $lowercase_provider_id . '_keys_key'] = array(
     '#type' => 'textfield',
     '#title' => t('Application consumer key'),
     '#description' => t('The Application consumer key.'),
-    '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_keys_key'),
+    '#default_value' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_key'),
   );
-  $form['vtabs']['application']['hybridauth_provider_' . $provider_id . '_keys_secret'] = array(
+  $form['vtabs']['application']['hybridauth_provider_' . $lowercase_provider_id . '_keys_secret'] = array(
     '#type' => 'textfield',
     '#title' => t('Application consumer secret'),
     '#description' => t('The application consumer secret key.'),
-    '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_keys_secret'),
+    '#default_value' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_secret'),
   );
 
   $form['vtabs']['window_settings'] = array(
@@ -506,11 +506,11 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
     $options['lightbox2'] = t('Lightbox2');
     $modal_description = TRUE;
   }
-  $form['vtabs']['window_settings']['hybridauth_provider_' . $provider_id . '_window_type'] = array(
+  $form['vtabs']['window_settings']['hybridauth_provider_' . $lowercase_provider_id . '_window_type'] = array(
     '#type' => 'radios',
     '#title' => t('Authentication window type'),
     '#options' => $options,
-    '#default_value' => (!empty($config->get('hybridauth_provider_' . $provider_id . '_window_type'))) ? $config->get('hybridauth_provider_' . $provider_id . '_window_type') : 'current',
+    '#default_value' => (!empty($config->get('hybridauth_provider_' . $lowercase_provider_id . '_window_type'))) ? $config->get('hybridauth_provider_' . $lowercase_provider_id . '_window_type') : 'current',
     '#description' => $modal_description ? t("Be careful with modal windows - some authentication providers (Twitter, LinkedIn) won't work with them.") : '',
   );
   $base = array(
@@ -520,19 +520,19 @@ function hybridauth_admin_provider_settings($form, &$form_state, $provider_id = 
     '#max' => 2000,
     '#states' => array(
       'invisible' => array(
-        ':input[name="hybridauth_provider_' . $provider_id . '_window_type"]' => array('value' => 'current'),
+        ':input[name="hybridauth_provider_' . $lowercase_provider_id . '_window_type"]' => array('value' => 'current'),
       ),
     ),
   );
-  $form['vtabs']['window_settings']['hybridauth_provider_' . $provider_id . '_window_width'] = array(
+  $form['vtabs']['window_settings']['hybridauth_provider_' . $lowercase_provider_id . '_window_width'] = array(
     '#title' => t('Width'),
     '#description' => t('Authentication window width (pixels).'),
-    '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_window_width'),
+    '#default_value' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_window_width'),
   ) + $base;
-  $form['vtabs']['window_settings']['hybridauth_provider_' . $provider_id . '_window_height'] = array(
+  $form['vtabs']['window_settings']['hybridauth_provider_' . $lowercase_provider_id . '_window_height'] = array(
     '#title' => t('Height'),
     '#description' => t('Authentication window height (pixels).'),
-    '#default_value' => $config->get('hybridauth_provider_' . $provider_id . '_window_height'),
+    '#default_value' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_window_height'),
   ) + $base;
 
   $provider = hybridauth_get_provider($provider_id);

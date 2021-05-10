@@ -722,7 +722,7 @@ function hybridauth_providers_list($reset = FALSE) {
     $raw_providers = array();
     foreach (hybridauth_providers_files($reset) as $name => $file) {
       $lowercase_name = strtolower($name);
-      $plugin = array() + $path;
+      $plugin = array();
       $default_plugin_file = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'hybridauth') . '/plugins/provider/' . $name . '/' . $name . '.inc';
       if (file_exists($default_plugin_file)) {
         require_once $default_plugin_file;
@@ -735,7 +735,7 @@ function hybridauth_providers_list($reset = FALSE) {
       }
       $raw_providers[$name] = array(
         'name' => t($name),
-        'plugin' => $plugin,
+        'plugin' => $plugin + $path,
       );
     }
     $providers = config_get('hybridauth.settings', 'hybridauth_providers');
@@ -745,7 +745,6 @@ function hybridauth_providers_list($reset = FALSE) {
     }
   }
   ksort($providers);
-
   return $providers;
 }
 
@@ -896,9 +895,9 @@ function hybridauth_get_storage() {
  * Returns HybridAuth config.
  */
 function hybridauth_get_config() {
-  $config = &backdrop_static(__FUNCTION__, NULL);
+  $ha_config = &backdrop_static(__FUNCTION__, NULL);
 
-  if (!isset($config)) {
+  if (!isset($ha_config)) {
     $logfile = file_directory_temp() . '/hybridauth.debug.log';
     $hybridauth_debug = config_get('hybridauth.settings', 'hybridauth_debug');
     if ($hybridauth_debug && file_put_contents($logfile, PHP_EOL . 'HYBRIDAUTH DEBUG LOG START' . PHP_EOL . PHP_EOL, FILE_APPEND) === FALSE) {
@@ -906,7 +905,7 @@ function hybridauth_get_config() {
       $hybridauth_debug = FALSE;
     }
 
-    $config = array(
+    $ha_config = array(
       'callback' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
       'providers' => array(),
       'debug_mode' => $hybridauth_debug,
@@ -916,21 +915,21 @@ function hybridauth_get_config() {
     // Special case Facebook: we need to provide a language-aware base URL
     // because otherwise there is a redirect_uri mismatch in the Facebook SDK.
     if ($_GET['q'] === 'hybridauth/window/Facebook') {
-      $config['callback'] = url('hybridauth/endpoint', array('absolute' => TRUE));
+      $ha_config['callback'] = url('hybridauth/endpoint', array('absolute' => TRUE));
     }
 
     if ($proxy = config_get('hybridauth.settings', 'hybridauth_proxy')) {
-      $config['proxy'] = $proxy;
+      $ha_config['proxy'] = $proxy;
     }
 
     foreach (hybridauth_get_enabled_providers() as $provider_id => $provider_name) {
       if ($provider_config = hybridauth_get_provider_config($provider_id)) {
-        $config['providers'][$provider_id] = $provider_config;
+        $ha_config['providers'][$provider_id] = $provider_config;
       }
     }
   }
 
-  return $config;
+  return $ha_config;
 }
 
 /**
@@ -938,7 +937,7 @@ function hybridauth_get_config() {
  */
 function hybridauth_get_provider_config($provider_id) {
   $config = config('hybridauth.settings');
-  $config = array(
+  $provider_config = array(
     'enabled' => array_key_exists($provider_id, array_filter($config->get('hybridauth_providers'))),
     'keys' => array(
       'id' => trim($config->get('hybridauth_provider_' . $provider_id . '_keys_id')),
@@ -949,8 +948,8 @@ function hybridauth_get_provider_config($provider_id) {
     'display' => $config->get('hybridauth_provider_' . $provider_id . '_display'),
     'hauth_return_to' => url('hybridauth/endpoint', array('absolute' => TRUE, 'language' => _hybridauth_language_default())),
   );
-  if (is_array($config['scope'])) {
-    $config['scope'] = array_filter($config['scope']);
+  if (is_array($provider_config['scope'])) {
+    $provider_config['scope'] = array_filter($config['scope']);
   }
 
   $provider = hybridauth_get_provider($provider_id);
@@ -963,9 +962,9 @@ function hybridauth_get_provider_config($provider_id) {
   }
 
   // Allow other modules to alter the provider config.
-  backdrop_alter('hybridauth_provider_config', $config, $provider_id);
+  backdrop_alter('hybridauth_provider_config', $provider_config, $provider_id);
 
-  return $config;
+  return $provider_config;
 }
 
 /**

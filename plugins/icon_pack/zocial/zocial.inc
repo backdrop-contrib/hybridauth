@@ -9,7 +9,7 @@
  */
 $plugin = array(
   'title' => t('Zocial'),
-  'initialize_callback' => 'hybridauth_zocial_initialize_callback',
+  'css' => backdrop_get_path('module', 'hybridauth') . 'plugins/icon_pack/zocial/library/css/zocial.css',
   'icon_classes_callback' => 'hybridauth_zocial_icon_classes_callback',
 );
 
@@ -17,19 +17,9 @@ $plugin = array(
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
  */
-function hybridauth_zocial_initialize_callback(&$element) {
-  $path = 'sites/all/libraries/zocial';
-  if (module_exists('libraries')) {
-    $path = libraries_get_path('zocial');
-  }
-  $element['#attached']['css'][] = $path . '/css/zocial.css';
-}
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
 function hybridauth_zocial_icon_classes_callback(&$classes, $provider_id) {
+  dpm($classes);
+  dpm($provider_id);
   $additional_classes = array('zocial', 'icon');
   if ($provider_id == 'Vkontakte') {
     $additional_classes[] = 'vk';

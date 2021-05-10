@@ -637,7 +637,16 @@ function hybridauth_hybridauth_icon_pack($name) {
       'css' => $filepath . 'hybridauth_48/hybridauth_48.css',
       'path' => $filepath . 'hybridauth_48/',
     ),
+    'zocial' => array(
+      'title' => t('Zocial'),
+      'css' => $filepath . 'zocial/library/css/zocial.css',
+      'path' => $filepath . 'zocial/',
+      'plugin' => array(
+        'icon_classes_callback' => 'hybridauth_zocial_icon_classes_callback',
+      ),
+    ),
   );
+  include_once($filepath . 'zocial/zocial.inc');
 
   return (isset($plugins[$name])) ? $plugins[$name] : $plugins;
 }

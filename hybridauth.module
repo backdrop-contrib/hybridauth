@@ -963,7 +963,7 @@ function hybridauth_get_provider_config($provider_id) {
   }
 
   $provider = hybridauth_get_provider($provider_id);
-  if (!empty($provider)) {
+  if (!empty($provider) && file_exists(BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc')) {
     require_once BACKDROP_ROOT . '/' . $provider[$provider_id]['plugin']['path'] . '/plugins/provider/' . $provider_id . '/' . $provider_id . '.inc';
     if (!empty($provider[$provider_id]['plugin']['configuration_callback'])) {
       $function = $provider[$provider_id]['plugin']['configuration_callback'];

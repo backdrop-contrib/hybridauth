@@ -23,7 +23,6 @@ function hybridauth_endpoint() {
       watchdog_exception('hybridauth', $e);
     }
     if ($storage = hybridauth_get_storage()) {
-      //dpm_watchdog(['endpoint' => $storage->get('provider')]);
       hybridauth_window_start($storage->get('provider'));
     }
   }

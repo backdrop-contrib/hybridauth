@@ -30,7 +30,8 @@ function template_preprocess_hybridauth_provider_icon(&$vars, $hook) {
 
   // Icon pack modifications.
   $icon_pack = hybridauth_get_icon_pack($vars['icon_pack']);
-  if (!empty($icon_pack['plugin']['icon_classes_callback'])) {
+  if (!empty($icon_pack['plugin']['icon_classes_callback']) && !empty($icon_pack['plugin']['include'])) {
+    include_once $icon_pack['plugin']['include'];
     $function = $icon_pack['plugin']['icon_classes_callback'];
     $function($icon_pack_classes, $vars['provider_id']);
   }

@@ -299,6 +299,7 @@ function hybridauth_element_info() {
     '#hybridauth_widget_link_text' => $config->get('hybridauth_widget_link_text'),
     '#hybridauth_widget_link_title' => $config->get('hybridauth_widget_link_title'),
     '#hybridauth_widget_icon_pack' => $config->get('hybridauth_widget_icon_pack'),
+    '#hybridauth_widget_button_text' => $config->get('hybridauth_widget_button_text'),
     '#hybridauth_widget_hide_links' => $config->get('hybridauth_widget_hide_links'),
     '#hybridauth_destination' => $config->get('hybridauth_destination'),
     '#hybridauth_destination_error' => $config->get('hybridauth_destination_error'),
@@ -408,12 +409,18 @@ function hybridauth_widget_pre_render($element) {
         elseif ($window_type == 'popup') {
           $class_mod[] = 'hybridauth-onclick-popup';
         }
-
+        if (!empty($element['#hybridauth_widget_button_text'])) {
+          $button_text = check_plain($element['#hybridauth_widget_button_text']);
+        }
+        else {
+          $button_text = t('Login with {provider}');
+        }
         $text = array(
           '#theme' => 'hybridauth_provider_icon',
           '#icon_pack' => $element['#hybridauth_widget_icon_pack'],
           '#provider_id' => $provider_id,
           '#provider_name' => $provider_name,
+          '#button_text' => str_replace('{provider}', $provider_name, $button_text),
         );
         $path = 'hybridauth/window/' . $provider_id;
         $url = url($path, array('query' => $query_mod));
@@ -511,9 +518,10 @@ function hybridauth_theme($existing, $type, $theme, $path) {
     ),
     'hybridauth_provider_icon' => array(
       'variables' => array(
-        'icon_pack' => 'hybridauth_32',
+        'icon_pack' => 'zocial',
         'provider_id' => NULL,
         'provider_name' => NULL,
+        'button_text' => NULL,
       ),
       'template' => 'templates/hybridauth_provider_icon',
       'file' => 'hybridauth.theme.inc',
@@ -638,15 +646,24 @@ function hybridauth_hybridauth_icon_pack($name) {
       'path' => $filepath . 'hybridauth_48/',
     ),
     'zocial' => array(
-      'title' => t('Zocial'),
+      'title' => t('Zocial icons'),
       'css' => $filepath . 'zocial/library/css/zocial.css',
       'path' => $filepath . 'zocial/',
       'plugin' => array(
+        'include' => $filepath . 'zocial/zocial.inc',
+        'icon_classes_callback' => 'hybridauth_zocial_icon_classes_callback',
+      ),
+    ),
+    'zocial_buttons' => array(
+      'title' => t('Zocial buttons'),
+      'css' => $filepath . 'zocial/library/css/zocial.css',
+      'path' => $filepath . 'zocial/',
+      'plugin' => array(
+        'include' => $filepath . 'zocial/zocial.inc',
         'icon_classes_callback' => 'hybridauth_zocial_icon_classes_callback',
       ),
     ),
   );
-  include_once($filepath . 'zocial/zocial.inc');
 
   return (isset($plugins[$name])) ? $plugins[$name] : $plugins;
 }
@@ -1013,6 +1030,9 @@ function _hybridauth_library_path() {
 function _hybridauth_add_icon_pack_files($name, &$element) {
   $done = &backdrop_static(__FUNCTION__, NULL);
   if (!isset($done[$name])) {
+    if (!empty($icon_pack['plugin']['include'])) {
+      include_once $icon_pack['plugin']['include'];
+    }
     $done[$name] = TRUE;
     $icon_pack = hybridauth_get_icon_pack($name);
     foreach (array('css', 'js') as $key) {
@@ -1022,7 +1042,7 @@ function _hybridauth_add_icon_pack_files($name, &$element) {
     }
     if (!empty($icon_pack['plugin']['initialize_callback'])) {
       $function = $icon_pack['plugin']['initialize_callback'];
-      $function($form, $provider_id);
+      $function($element, $provider_id);
     }
   }
 }

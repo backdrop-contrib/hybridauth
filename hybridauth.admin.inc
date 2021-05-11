@@ -46,14 +46,16 @@ function hybridauth_admin_settings($form, &$form_state) {
   $available_providers = hybridauth_providers_files();
   $form['vtabs']['fset_providers']['hybridauth_providers'] = array();
   $icon_pack = $config->get('hybridauth_widget_icon_pack');
+  $button_text_template = $config->get('hybridauth_widget_button_text');
   _hybridauth_add_icon_pack_files($icon_pack, $form);
   foreach (array_keys($enabled_providers + $providers) as $provider_id) {
+    $button_text = str_replace('{provider}', $providers[$provider_id]['name'], $button_text_template);
     $available = array_key_exists($provider_id, $available_providers);
     // Sort options below by whether they are available or not.
     if ($available) {
       $options[$provider_id] = array(
         'name' => $providers[$provider_id]['name'],
-        'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id]['name'])),
+        'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id]['name'], 'button_text' => $button_text)),
         'available' => $available ? t('Yes') : t('No'),
         'settings' => l(t('Settings'), 'admin/config/people/hybridauth/provider/' . $provider_id, array('query' => backdrop_get_destination())),
         '#attributes' => array(
@@ -64,7 +66,7 @@ function hybridauth_admin_settings($form, &$form_state) {
     else {
       $options_unavailable[$provider_id] = array(
         'name' => $providers[$provider_id]['name'],
-        'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id]['name'])),
+        'icon' => theme('hybridauth_provider_icon', array('icon_pack' => $icon_pack, 'provider_id' => $provider_id, 'provider_name' => $providers[$provider_id]['name'], 'button_text' => $button_text)),
         'available' => $available ? t('Yes') : t('No'),
         'settings' => '',
         '#attributes' => array(
@@ -157,14 +159,20 @@ function hybridauth_admin_settings($form, &$form_state) {
     ),
   );
   $options = array();
-  foreach (hybridauth_get_icon_packs() as $name => $icon_pack) {
-    $options[$name] = $icon_pack['title'];
+  foreach (hybridauth_get_icon_packs() as $name => $icon_pack_array) {
+    $options[$name] = $icon_pack_array['title'];
   }
   $form['vtabs']['fset_widget']['hybridauth_widget_icon_pack'] = array(
     '#type' => 'select',
     '#title' => t('Icon package'),
     '#options' => $options,
     '#default_value' => $config->get('hybridauth_widget_icon_pack'),
+  );
+  $form['vtabs']['fset_widget']['hybridauth_widget_button_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Login button text'),
+    '#description' => t('Not shown with most icon packs. Default: <em>Login with {provider}</em>'),
+    '#default_value' => $config->get('hybridauth_widget_button_text'),
   );
   $form['vtabs']['fset_widget']['hybridauth_widget_weight'] = array(
     '#type' => 'weight',
@@ -392,7 +400,9 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#default_value' => $config->get('hybridauth_debug'),
   );
   $form['#attached']['css'][] = $path . '/css/hybridauth.admin.css';
-
+  if ($icon_pack == 'zocial_buttons') {
+    $form['#attached']['css'][] = $path . '/plugins/icon_pack/zocial/zocial.buttons.css';
+  }
   return system_settings_form($form);
 }
 

@@ -5,22 +5,21 @@
  */
 
 /**
- * Plugin declaration.
- */
-$plugin = array(
-  'title' => t('Zocial'),
-  'css' => backdrop_get_path('module', 'hybridauth') . 'plugins/icon_pack/zocial/library/css/zocial.css',
-  'icon_classes_callback' => 'hybridauth_zocial_icon_classes_callback',
-);
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Add additional classes for Zocial icons/buttons.
  */
 function hybridauth_zocial_icon_classes_callback(&$classes, $provider_id) {
-  $additional_classes = array('zocial', 'icon');
+  $additional_classes = array('zocial');
+  if ($provider_id == 'zocial') {
+    $additional_classes[] = 'icon';
+  }
+  elseif ($provider_id == 'zocial_buttons') {
+    backdrop_add_css($filepath . 'zocial/zocial.buttons.css');
+  }
   if ($provider_id == 'Vkontakte') {
     $additional_classes[] = 'vk';
+  }
+  if ($provider_id == 'Apple') {
+    $additional_classes[] = 'appstore';
   }
   $classes = array_merge($classes, $additional_classes);
 }

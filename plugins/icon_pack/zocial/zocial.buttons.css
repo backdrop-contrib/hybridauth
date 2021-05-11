@@ -1,0 +1,36 @@
+.hybridauth-icon.hybridauth-icon-zocial-buttons {
+  color: #030037;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.hybridauth-icon-zocial-buttons .button-text {
+  position: relative;
+  clip: none;
+  overflow: visible;
+  height: auto;
+  width: auto;
+}
+.hybridauth-icon-zocial-buttons::before {
+  float: none;
+}
+
+.hybridauth-icon.twitter,
+.hybridauth-icon.appstore,
+.hybridauth-icon.bitbucket,
+.hybridauth-icon.deviantart,
+.hybridauth-icon.disqus,
+.hybridauth-icon.dribbble,
+.hybridauth-icon.facebook,
+.hybridauth-icon.foursquare,
+.hybridauth-icon.google,
+.hybridauth-icon.instagram,
+.hybridauth-icon.linkedin,
+.hybridauth-icon.pinterest,
+.hybridauth-icon.slack,
+.hybridauth-icon.spotify,
+.hybridauth-icon.steam,
+.hybridauth-icon.tumblr,
+.hybridauth-icon.vk,
+.hybridauth-icon.wordpress,
+.hybridauth-icon.yahoo {
+  color: #fff;
+}

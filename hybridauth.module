@@ -967,9 +967,9 @@ function hybridauth_get_provider_config($provider_id) {
   $provider_config = array(
     'enabled' => array_key_exists($provider_id, array_filter($config->get('hybridauth_providers'))),
     'keys' => array(
-      'id' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_id')),
-      'key' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_key')),
-      'secret' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_secret')),
+      'id' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_id') ?? ''),
+      'key' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_key') ?? ''),
+      'secret' => trim($config->get('hybridauth_provider_' . $lowercase_provider_id . '_keys_secret') ?? ''),
     ),
     'scope' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_scope'),
     'display' => $config->get('hybridauth_provider_' . $lowercase_provider_id . '_display'),

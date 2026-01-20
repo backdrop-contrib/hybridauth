@@ -339,7 +339,7 @@ function hybridauth_widget_pre_render($element) {
       global $base_root, $base_path;
       $path = str_replace($base_root . $base_path, '', $_SERVER['HTTP_REFERER']);
       // Remove language prefix if the site is multilingual.
-      if (backdrop_multilingual()) {
+      if (language_multilingual()) {
         list(, $path) = language_url_split_prefix($path, language_list());
       }
       $query += array(

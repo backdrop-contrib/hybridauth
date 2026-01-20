@@ -47,11 +47,12 @@ function hybridauth_admin_settings($form, &$form_state) {
   $form['vtabs']['fset_providers']['hybridauth_providers'] = array();
   $icon_pack = $config->get('hybridauth_widget_icon_pack');
   $button_text_template = $config->get('hybridauth_widget_button_text');
-  _hybridauth_add_icon_pack_files($icon_pack, $form);  
-  foreach (array_keys($enabled_providers + $providers) as $provider_id) {    
-    
-    if (!is_array($providers[$provider_id])) continue;  // Not a valid provider, or the provider is no longer supported.
-    
+  _hybridauth_add_icon_pack_files($icon_pack, $form);
+  foreach (array_keys($enabled_providers + $providers) as $provider_id) {
+    if (!is_array($providers[$provider_id])) {
+      // Not a valid provider, or the provider is no longer supported.
+      continue;
+    }
     $button_text = str_replace('{provider}', $providers[$provider_id]['name'], $button_text_template);
     $available = array_key_exists($provider_id, $available_providers);
     // Sort options below by whether they are available or not.

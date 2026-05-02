@@ -19,7 +19,7 @@ function hybridauth_requirements($phase) {
         require_once $lib_path . '/autoload.php';
         $requirements['hybridauth'] = array(
           'title' => $t('HybridAuth library'),
-          'value' => '3.12.2',
+          'value' => '3.13.0',
           'severity' => REQUIREMENT_OK,
         );
       }

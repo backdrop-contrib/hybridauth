@@ -1,6 +1,6 @@
 # HybridAuth for Backdrop
 
-HybridAuth Social Login bundles the HybridAuth library (v3.12.2) and allows
+HybridAuth Social Login bundles the HybridAuth library (v3.13.0) and allows
 your Backdrop site users to login and register using:
 
  - Facebook
@@ -60,12 +60,13 @@ Bugs and Feature requests should be reported in the
 
 ## Current Maintainers
 
-- [Laryn Kragt Bakker](https://github.com/laryn) - [CEDC.org](https://cedc.org)
+- [Laryn Kragt Bakker](https://github.com/laryn)
 - Seeking additional maintainers
 
 ## Credits
 
-- Ported to Backdrop CMS by [Laryn Kragt Bakker](https://github.com/laryn) - [CEDC.org](https://cedc.org)
+- Ported to Backdrop CMS by [Laryn Kragt Bakker](https://github.com/laryn)
+- Initial port to Backdrop was sponsored by [CEDC.org](https://cedc.org)
 - Maintainer for the Drupal module: [duozersk](https://www.drupal.org/u/duozersk)
 
 ## License

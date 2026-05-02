@@ -1012,14 +1012,15 @@ function hybridauth_get_connected_providers() {
 
 /**
  * Returns the path to the HybridAuth library.
+ *
+ * @return string|bool
+ *   The path to the library, or FALSE if it can't be found.
  */
 function _hybridauth_library_path() {
 
-  $library_path = backdrop_get_path('module', 'hybridauth') . '/library/src';
+  $library_path = backdrop_get_path('module', 'hybridauth') . '/libraries/src';
 
-  if (file_exists($library_path . '/autoload.php')) {
-  }
-  else {
+  if (!file_exists($library_path . '/autoload.php')) {
     watchdog('hybridauth', 'HybridAuth library is missing.', array(), WATCHDOG_ERROR);
     $library_path = FALSE;
   }
@@ -1027,6 +1028,16 @@ function _hybridauth_library_path() {
   return $library_path;
 }
 
+/**
+ * Helper function to include icon pack files and initialize them.
+ *
+ * @param string $name
+ *   The name of the icon pack.
+ * @param array $element
+ *   The renderable element to attach the icon pack files to.
+ *
+ * @return void
+ */
 function _hybridauth_add_icon_pack_files($name, &$element) {
   $done = &backdrop_static(__FUNCTION__, NULL);
   if (!isset($done[$name])) {
@@ -1053,7 +1064,8 @@ function _hybridauth_add_icon_pack_files($name, &$element) {
  * @param array $data
  *   The data returned by HybridAuth or entered by the user.
  * @param bool $allow_empty
- *  (optional) Allow this function to return empty username.
+ *   (optional) Allow this function to return empty username.
+ *
  * @return string
  *   The proposed user name to use for this user.
  */

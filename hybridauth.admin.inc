@@ -49,6 +49,10 @@ function hybridauth_admin_settings($form, &$form_state) {
   $button_text_template = $config->get('hybridauth_widget_button_text');
   _hybridauth_add_icon_pack_files($icon_pack, $form);
   foreach (array_keys($enabled_providers + $providers) as $provider_id) {
+    if (!is_array($providers[$provider_id])) {
+      // Not a valid provider, or the provider is no longer supported.
+      continue;
+    }
     $button_text = str_replace('{provider}', $providers[$provider_id]['name'], $button_text_template);
     $available = array_key_exists($provider_id, $available_providers);
     // Sort options below by whether they are available or not.
@@ -436,8 +440,10 @@ function hybridauth_admin_settings_validate($form, &$form_state) {
 
   // Remove weights so they are not saved as variables.
   foreach (array_keys($providers) as $provider_id) {
-    $providers_weights[$provider_id] = $values['hybridauth_provider_' . $provider_id . '_weight'];
-    unset($values['hybridauth_provider_' . $provider_id . '_weight']);
+    if (isset($values['hybridauth_provider_' . $provider_id . '_weight'])) {
+      $providers_weights[$provider_id] = $values['hybridauth_provider_' . $provider_id . '_weight'];
+      unset($values['hybridauth_provider_' . $provider_id . '_weight']);
+    }
   }
   asort($providers_weights);
 
@@ -445,7 +451,9 @@ function hybridauth_admin_settings_validate($form, &$form_state) {
   unset($values['hybridauth_providers']);
 
   foreach (array_keys($providers_weights) as $provider_id) {
-    $values['hybridauth_providers'][$provider_id] = $providers_values[$provider_id];
+    if (isset($providers_values[$provider_id])) {
+      $values['hybridauth_providers'][$provider_id] = $providers_values[$provider_id];
+    }
   }
 
   // Cast hybridauth_debug to boolean.

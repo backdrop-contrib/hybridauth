@@ -878,8 +878,9 @@ function hybridauth_get_instance() {
   if (!isset($controller)) {
     $controller = FALSE;
 
-    if ($lib_path = _hybridauth_library_path()) {
-      if (file_exists($lib_path . '/autoload.php')) {
+    $already_loaded = class_exists('Hybridauth\Hybridauth');
+    if ($already_loaded || $lib_path = _hybridauth_library_path()) {
+      if (!$already_loaded && file_exists($lib_path . '/autoload.php')) {
         require_once $lib_path . '/autoload.php';
       }
       $config = hybridauth_get_config();
@@ -1011,7 +1012,7 @@ function hybridauth_get_connected_providers() {
 }
 
 /**
- * Returns the path to the HybridAuth library.
+ * Returns the path to the bundled HybridAuth library.
  *
  * @return string|bool
  *   The path to the library, or FALSE if it can't be found.

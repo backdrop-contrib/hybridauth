@@ -1,0 +1,11 @@
+{
+    "name": "backdrop/hybridauth",
+    "require": {
+        "hybridauth/hybridauth": "^3.13"
+    },
+    "description": "Use HybridAuth to integrate social login providers.",
+    "homepage": "https://www.backdropcms.org/project/hybridauth",
+    "support": {
+        "source": "https://github.com/backdrop-contrib/hybridauth/issues"
+    }
+}

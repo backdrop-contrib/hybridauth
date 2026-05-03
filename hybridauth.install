@@ -14,30 +14,42 @@ function hybridauth_requirements($phase) {
   $t = get_t();
 
   if ($phase == 'install' || $phase == 'runtime') {
-    if ($lib_path = _hybridauth_library_path()) {
+    $title = $t('HybridAuth library');
+    $value = $description = $severity = '';
+    if (class_exists('Hybridauth\Hybridauth')) {
+      if (module_exists('composer_manager')) {
+        $installed = composer_manager_installed_packages();
+        if (isset($installed['hybridauth/hybridauth'])) {
+          $value = $installed['hybridauth/hybridauth']['version'];
+        }
+      }
+      if (empty($value)) {
+        $value = t('Unknown: Loaded outside of the HybridAuth module');
+      }
+      $severity = REQUIREMENT_OK;
+    }
+    elseif ($lib_path = _hybridauth_library_path()) {
       try {
         require_once $lib_path . '/autoload.php';
-        $requirements['hybridauth'] = array(
-          'title' => $t('HybridAuth library'),
-          'value' => '3.13.0',
-          'severity' => REQUIREMENT_OK,
-        );
+        $value = '3.13.0';
+        $severity = REQUIREMENT_OK;
       }
       catch (Exception $e) {
-        $requirements['hybridauth'] = array(
-          'title' => $t('HybridAuth library'),
-          'description' => $e->getMessage(),
-          'severity' => REQUIREMENT_ERROR,
-        );
+        $description = $e->getMessage();
+        $value = '';
+        $severity = REQUIREMENT_ERROR;
       }
     }
     else {
-      $requirements['hybridauth'] = array(
-        'title' => $t('HybridAuth library'),
-        'description' => $t('HybridAuth library is missing'),
-        'severity' => REQUIREMENT_ERROR,
-      );
+      $description = $t('HybridAuth library is missing');
+      $severity = REQUIREMENT_ERROR;
     }
+    $requirements['hybridauth'] = array(
+      'title' => $title,
+      'value' => $value,
+      'severity' => $severity,
+      'description' => $description,
+    );
   }
 
   return $requirements;

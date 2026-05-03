@@ -789,7 +789,16 @@ function hybridauth_providers_files($reset = FALSE) {
 
   // Scan Providers directory if $reset == TRUE or there was no cached value.
   if (empty($files)) {
-    $files = file_scan_directory(_hybridauth_library_path() . '/Provider', '/\.php$/', array('key' => 'name'));
+    // Determine a directory to scan. First check if we can determine whether
+    // Composer is loading things apart from the bundled version.
+    if (class_exists('Hybridauth\Hybridauth')) {
+      $reflection = new ReflectionClass('Hybridauth\Hybridauth');
+      $provider_dir = dirname($reflection->getFileName()) . '/Provider';
+    }
+    else {
+      $provider_dir = _hybridauth_library_path() . '/Provider';
+    }
+    $files = file_scan_directory($provider_dir, '/\.php$/', array('key' => 'name'));
     cache_set('hybridauth_providers_files', $files, 'cache', CACHE_TEMPORARY);
   }
   return $files;

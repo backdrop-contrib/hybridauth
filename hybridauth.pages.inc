@@ -5,26 +5,26 @@
  */
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Page callback for the HybridAuth endpoint.
+ *
+ * @see hybridauth_menu()
  */
 function hybridauth_endpoint() {
   // Make sure the session is started, HybridAuth library needs it.
   hybridauth_session_start();
 
-  if ($lib_path = _hybridauth_library_path()) {
+  if (!class_exists('Hybridauth\Hybridauth') && $lib_path = _hybridauth_library_path()) {
     try {
       if (file_exists($lib_path . '/autoload.php')) {
         require_once $lib_path . '/autoload.php';
       }
-      //require_once $lib_path . '/index.php';
     }
     catch (Exception $e) {
       watchdog_exception('hybridauth', $e);
     }
-    if ($storage = hybridauth_get_storage()) {
+  }
+  if (class_exists('Hybridauth\Hybridauth') && $storage = hybridauth_get_storage()) {
       hybridauth_window_start($storage->get('provider'));
-    }
   }
 }
 
@@ -130,6 +130,9 @@ function _hybridauth_window_close($redirect = TRUE) {
   backdrop_exit();
 }
 
+/**
+ *
+ */
 function _hybridauth_window_auth($hybridauth, $provider_id) {
   $error_code = NULL;
   if (is_object($hybridauth)) {
@@ -332,7 +335,7 @@ function _hybridauth_window_process_auth($data) {
         $userinfo['status'] = 0;
         $admin_approval_required = TRUE;
       }
-      foreach($userinfo as $key => $value) {
+      foreach ($userinfo as $key => $value) {
         $account->{$key} = $value;
       }
       $account_status = user_save($account);
@@ -390,7 +393,7 @@ function _hybridauth_window_process_auth($data) {
         if (module_exists('legal')) {
           $edit['legal_accept'] = NULL;
         }
-        foreach($edit as $key => $value) {
+        foreach ($edit as $key => $value) {
           $account->{$key} = $value;
         }
         $account_status = user_save($account);
@@ -428,6 +431,9 @@ function _hybridauth_window_process_auth($data) {
   _hybridauth_window_close();
 }
 
+/**
+ *
+ */
 function _hybridauth_check_additional_info($data) {
   $config = config('hybridauth.settings');
   $show_form = FALSE;
@@ -459,6 +465,9 @@ function _hybridauth_check_additional_info($data) {
   }
 }
 
+/**
+ *
+ */
 function _hybridauth_window_render_form($form, $provider_id) {
   $window_type = config_get('hybridauth.settings', 'hybridauth_provider_' . $provider_id . '_window_type');
 
@@ -514,7 +523,7 @@ function hybridauth_additional_info_form($form, &$form_state, $data) {
   if ($config->get('hybridauth_registration_password')) {
     $form['fset']['pass'] = array(
       '#type' => 'password_confirm',
-      //'#title' => t('Password'),
+      // '#title' => t('Password'),
       '#required' => TRUE,
     );
   }
@@ -780,9 +789,9 @@ function hybridauth_user_identity_delete($form, &$form_state, $account, $id) {
   $username = user_format_name($account);
   $question = t('Are you sure you want to detach the HybridAuth identity !identity from %user?',
     array(
-    '!identity' => l($del_identity_data['profileURL'], $del_identity_data['profileURL'], array('attributes' => array('target' => '_blank'), 'external' => TRUE)),
-    '%user' => $username,
-  ));
+      '!identity' => l($del_identity_data['profileURL'], $del_identity_data['profileURL'], array('attributes' => array('target' => '_blank'), 'external' => TRUE)),
+      '%user' => $username,
+    ));
 
   $form = array();
   $form['#user'] = $account;

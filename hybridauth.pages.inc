@@ -295,8 +295,8 @@ function _hybridauth_window_process_auth($data) {
   // Create new user account.
   else {
     // Visitors can create accounts.
-    if (($config->get('hybridauth_register') == 0 && config_get('system.core', 'user_register'))
-       || $config->get('hybridauth_register') == 1 || $config->get('hybridauth_register') == 2) {
+    if (($config->get('hybridauth_register') == 'core' && config_get('system.core', 'user_register'))
+       || $config->get('hybridauth_register') == USER_REGISTER_VISITORS || $config->get('hybridauth_register') == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL) {
       _hybridauth_invoke_hooks('hybridauth_user_preinsert', $user, $data);
       $account = entity_create('user', array('is_new' => TRUE));
 
@@ -330,8 +330,8 @@ function _hybridauth_window_process_auth($data) {
 
       $admin_approval_required = FALSE;
       // Admin approval is required.
-      if (($config->get('hybridauth_register') == 0 && config_get('system.core', 'user_register') == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)
-         || $config->get('hybridauth_register') == 2) {
+      if (($config->get('hybridauth_register') == 'core' && config_get('system.core', 'user_register') == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)
+         || $config->get('hybridauth_register') == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL) {
         $userinfo['status'] = 0;
         $admin_approval_required = TRUE;
       }
@@ -411,12 +411,12 @@ function _hybridauth_window_process_auth($data) {
       }
     }
     // Visitors can't register accounts through HybridAuth.
-    elseif ($config->get('hybridauth_register') == 3) {
+    elseif ($config->get('hybridauth_register') == USER_REGISTER_ADMINISTRATORS_ONLY) {
       if (config_get('system.core', 'user_register')) {
-        $message = t('Sorry, you are not allowed to login. Please, <a href="@register">create a new account</a>.', array('@register' => url('user/register')));
+        $message = t('Sorry, you are not allowed to create an account this way. Please, <a href="@register">create a new account here first</a>.', array('@register' => url('user/register')));
       }
       else {
-        $message = t('New account registration is not allowed.');
+        $message = t('Sorry, new account registration is not allowed. If you have an account with a different email address or provider, please try to login using that account.');
       }
       backdrop_set_message($message, 'error');
       _hybridauth_window_close(FALSE);

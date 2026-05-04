@@ -295,7 +295,7 @@ function _hybridauth_window_process_auth($data) {
   // Create new user account.
   else {
     // Visitors can create accounts.
-    if (($config->get('hybridauth_register') == 'core' && config_get('system.core', 'user_register'))
+    if (($config->get('hybridauth_register') == 'core' && config_get('system.core', 'user_register') != USER_REGISTER_ADMINISTRATORS_ONLY)
        || $config->get('hybridauth_register') == USER_REGISTER_VISITORS || $config->get('hybridauth_register') == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL) {
       _hybridauth_invoke_hooks('hybridauth_user_preinsert', $user, $data);
       $account = entity_create('user', array('is_new' => TRUE));
@@ -412,7 +412,7 @@ function _hybridauth_window_process_auth($data) {
     }
     // Visitors can't register accounts through HybridAuth.
     elseif ($config->get('hybridauth_register') == USER_REGISTER_ADMINISTRATORS_ONLY) {
-      if (config_get('system.core', 'user_register')) {
+      if (config_get('system.core', 'user_register') != USER_REGISTER_ADMINISTRATORS_ONLY) {
         $message = t('Sorry, you are not allowed to create an account this way. Please, <a href="@register">create a new account here first</a>.', array('@register' => url('user/register')));
       }
       else {
@@ -508,7 +508,7 @@ function hybridauth_additional_info_form($form, &$form_state, $data) {
       '#attributes' => array('class' => array('username')),
       '#default_value' => _hybridauth_make_username($data, TRUE),
       '#description' => t('Choose your username.') . ' '
-        . t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, apostrophes, and underscores.'),
+      . t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, apostrophes, and underscores.'),
     );
     if (module_exists('username_check')) {
       _username_check_load_resources('auto');
@@ -881,7 +881,7 @@ function hybridauth_user_identity_delete_submit($form, &$form_state) {
     $account->data['hybridauth'] = $data;
     // Change name.
     // $name = _hybridauth_make_username($data);
-    // $account->name = $name;
+    // $account->name = $name;.
     user_save($account);
   }
 

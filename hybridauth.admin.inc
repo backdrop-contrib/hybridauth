@@ -14,8 +14,8 @@
 function hybridauth_admin_settings($form, &$form_state) {
   $path = backdrop_get_path('module', 'hybridauth');
   $config = config('hybridauth.settings');
-  if ($config->get('hybridauth_register') == 0 && config_get('system.performance', 'user_register') == USER_REGISTER_ADMINISTRATORS_ONLY) {
-    backdrop_set_message(t('Currently only administrators can create new user accounts. Either change the "Who can register accounts?" option under "Account settings" tab or at the core <a href="!link">Account settings</a>.',
+  if ($config->get('hybridauth_register') == 'core' && config_get('system.core', 'user_register') == USER_REGISTER_ADMINISTRATORS_ONLY) {
+    backdrop_set_message(t('Currently only administrators can create new user accounts. If you want to change this, either change the "Who can register accounts?" option under "Account settings" tab or at the core <a href="!link">Account settings</a>.',
       array('!link' => url('admin/config/people/settings'))), 'warning');
   }
 
@@ -206,15 +206,15 @@ function hybridauth_admin_settings($form, &$form_state) {
     '#type' => 'radios',
     '#title' => t('Who can register accounts?'),
     '#options' => array(
-      0 => t('Follow core') . ': ' . $core_settings[config_get('system.core', 'user_register')],
-      1 => t('Visitors'),
-      2 => t('Visitors, but administrator approval is required'),
-      3 => t('Nobody, only login for existing accounts is possible'),
+      'core' => t('Follow core') . ': ' . $core_settings[config_get('system.core', 'user_register')],
+      USER_REGISTER_VISITORS => t('Visitors'),
+      USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL => t('Visitors, but administrator approval is required'),
+      USER_REGISTER_ADMINISTRATORS_ONLY => t('Nobody, only login for existing accounts is possible'),
     ),
     '#description' => t('Select who can register accounts through HybridAuth.') . ' '
       . t('The core settings are available at <a href="!link">Account settings</a>.',
         array('!link' => url('admin/config/people/settings'))),
-    '#default_value' => $config->get('hybridauth_register'),
+    '#default_value' => $config->get('hybridauth_register') ?? 'core',
   );
   $core_settings = array(
     0 => t("Don't require e-mail verification"),

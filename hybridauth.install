@@ -160,33 +160,32 @@ function hybridauth_update_last_removed() {
  */
 function hybridauth_update_1000() {
   $config = config('hybridauth.settings');
-  $config->set('hybridauth_register', update_variable_get('hybridauth_register', 'novalue'));
+  $config->set('hybridauth_register', update_variable_get('hybridauth_register', 'core'));
   $config->set('hybridauth_providers', update_variable_get('hybridauth_providers', array()));
   $config->set('hybridauth_required_fields', update_variable_get('hybridauth_required_fields', array('email' => 'email')));
   $config->set('hybridauth_widget_title', update_variable_get('hybridauth_widget_title', 'Or log in with...'));
   $config->set('hybridauth_widget_type', update_variable_get('hybridauth_widget_type', 'list'));
-  $config->set('hybridauth_widget_use_overlay', update_variable_get('hybridauth_widget_use_overlay', '1'));
+  $config->set('hybridauth_widget_use_overlay', update_variable_get('hybridauth_widget_use_overlay', 1));
   $config->set('hybridauth_widget_link_text', update_variable_get('hybridauth_widget_link_text', 'Social network account'));
   $config->set('hybridauth_widget_link_title', update_variable_get('hybridauth_widget_link_title', 'Social network account'));
   $config->set('hybridauth_widget_icon_pack', update_variable_get('hybridauth_widget_icon_pack', 'hybridauth_32'));
-  $config->set('hybridauth_widget_weight', update_variable_get('hybridauth_widget_weight', '100'));
-  $config->set('hybridauth_widget_hide_links', update_variable_get('hybridauth_widget_hide_links', 'novalue'));
-  $config->set('hybridauth_email_verification', update_variable_get('hybridauth_email_verification', 'novalue'));
+  $config->set('hybridauth_widget_weight', update_variable_get('hybridauth_widget_weight', 100));
+  $config->set('hybridauth_widget_hide_links', update_variable_get('hybridauth_widget_hide_links', 0));
+  $config->set('hybridauth_email_verification', update_variable_get('hybridauth_email_verification', 0));
   $config->set('hybridauth_pictures', update_variable_get('hybridauth_pictures', '1'));
-  $config->set('hybridauth_username', update_variable_get('hybridauth_username', '[user:hybridauth:firstName] [user:hybridauth:lastName]'));
+  $config->set('hybridauth_username', update_variable_get('hybridauth_username', '[user:hybridauth:firstName][user:hybridauth:lastName]'));
   $config->set('hybridauth_display_name', update_variable_get('hybridauth_display_name', '[user:hybridauth:firstName] [user:hybridauth:lastName]'));
-  $config->set('hybridauth_registration_username_change', update_variable_get('hybridauth_registration_username_change', 'novalue'));
-  $config->set('hybridauth_registration_password', update_variable_get('hybridauth_registration_password', 'novalue'));
-  $config->set('hybridauth_override_realname', update_variable_get('hybridauth_override_realname', 'novalue'));
-  $config->set('hybridauth_disable_username_change', update_variable_get('hybridauth_disable_username_change', '1'));
-  $config->set('hybridauth_remove_password_fields', update_variable_get('hybridauth_remove_password_fields', '1'));
-  $config->set('hybridauth_forms', update_variable_get('hybridauth_forms', array('user_login', 'user_login_block')));
+  $config->set('hybridauth_registration_username_change', update_variable_get('hybridauth_registration_username_change', 0));
+  $config->set('hybridauth_registration_password', update_variable_get('hybridauth_registration_password', 0));
+  $config->set('hybridauth_override_realname', update_variable_get('hybridauth_override_realname', 0));
+  $config->set('hybridauth_disable_username_change', update_variable_get('hybridauth_disable_username_change', 1));
+  $config->set('hybridauth_remove_password_fields', update_variable_get('hybridauth_remove_password_fields', 1));
+  $config->set('hybridauth_forms', update_variable_get('hybridauth_forms', array('user_login', 'user_login_block', 'comment_form')));
   $config->set('hybridauth_destination', update_variable_get('hybridauth_destination', ''));
   $config->set('hybridauth_destination_error', update_variable_get('hybridauth_destination_error', ''));
-  $config->set('hybridauth_duplicate_emails', update_variable_get('hybridauth_duplicate_emails', '1'));
-  $config->set('hybridauth_proxy', update_variable_get('hybridauth_proxy', 'NULL'));
-  $config->set('hybridauth_debug', update_variable_get('hybridauth_debug', 'FALSE'));
-  $config->set('hybridauth_library_path', update_variable_get('hybridauth_library_path', ''));
+  $config->set('hybridauth_duplicate_emails', update_variable_get('hybridauth_duplicate_emails', 1));
+  $config->set('hybridauth_proxy', update_variable_get('hybridauth_proxy', NULL));
+  $config->set('hybridauth_debug', update_variable_get('hybridauth_debug', FALSE));
   update_variable_del('hybridauth_register');
   update_variable_del('hybridauth_providers');
   update_variable_del('hybridauth_required_fields');
@@ -235,8 +234,18 @@ function hybridauth_update_1000() {
 }
 
 /**
- * Implements hook_install().
+ * Update user registration values to match Backdrop constants.
  */
-function hybridauth_install() {
-
+function hybridauth_update_1001() {
+  $registration_values = [
+    0 => 'core',
+    1 => 'visitors',
+    2 => 'visitors_administrative_approval',
+    3 => 'administrators_only',
+  ];
+  $config = config('hybridauth.settings');
+  $old_register_setting = (int) $config->get('hybridauth_register');
+  $new_register_setting = $registration_values[$old_register_setting] ?? 'core';
+  $config->set('hybridauth_register', $new_register_setting);
+  $config->save();
 }

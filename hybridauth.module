@@ -208,15 +208,6 @@ function hybridauth_user_delete($account) {
 }
 
 /**
- * Implements hook_user_cancel().
- */
-/*function hybridauth_user_cancel($edit, $account, $method) {
- if (in_array($method, array('user_cancel_reassign', 'user_cancel_delete'))) {
- _hybridauth_identity_delete_by_uid($account->uid);
- }
- }*/
-
-/**
  * Implements hook_form_alter().
  */
 function hybridauth_form_alter(&$form, &$form_state, $form_id) {

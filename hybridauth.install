@@ -185,7 +185,7 @@ function hybridauth_update_1000() {
   $config->set('hybridauth_destination_error', update_variable_get('hybridauth_destination_error', ''));
   $config->set('hybridauth_duplicate_emails', update_variable_get('hybridauth_duplicate_emails', 1));
   $config->set('hybridauth_proxy', update_variable_get('hybridauth_proxy', NULL));
-  $config->set('hybridauth_debug', update_variable_get('hybridauth_debug', FALSE));
+  $config->set('hybridauth_debug', update_variable_get('hybridauth_debug', 0));
   update_variable_del('hybridauth_register');
   update_variable_del('hybridauth_providers');
   update_variable_del('hybridauth_required_fields');

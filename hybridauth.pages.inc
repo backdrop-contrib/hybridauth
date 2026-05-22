@@ -354,20 +354,56 @@ function _hybridauth_window_process_auth($data) {
       // Save user picture.
       if (config_get('system.core', 'user_pictures') && $config->get('hybridauth_pictures')) {
         $photo_url = $data['photoURL'];
-        if (valid_url($photo_url)) {
-          $photo = backdrop_http_request($photo_url);
-          if (isset($photo->error)) {
+        // Validate URL scheme to prevent SSRF via non-http(s) protocols (e.g.
+        // file://, ftp://, gopher://, data:).
+        if (!_hybridauth_picture_url_is_allowed($photo_url)) {
+          watchdog('hybridauth', 'Invalid or unsafe picture URL provided: @url', array('@url' => $photo_url), WATCHDOG_WARNING);
+        }
+        else {
+          $photo = backdrop_http_request($photo_url, array(
+            'timeout' => 10,
+            'max_redirects' => 3,
+          ));
+          if (!empty($photo->error)) {
             watchdog('hybridauth', 'Error while executing backdrop_http_request() to %url: %error.', array('%url' => $photo_url, '%error' => $photo->error), WATCHDOG_ERROR);
           }
+          elseif ($photo->code != 200) {
+            watchdog('hybridauth', 'Failed to fetch user picture from %url: received HTTP @code.', array('%url' => $photo_url, '@code' => $photo->code), WATCHDOG_WARNING);
+          }
+          elseif (strlen($photo->data) > 5 * 1024 * 1024) {
+            // Enforce a size limit to mitigate memory exhaustion from large responses.
+            watchdog('hybridauth', 'User picture too large from %url.', array('%url' => $photo_url), WATCHDOG_WARNING);
+          }
           else {
-            if ($file = file_save_data($photo->data)) {
-              // To make user_save() to process the file and move it.
-              $file->status = 0;
-              $edit['picture'] = $file;
-              $user_save_trigger = TRUE;
+            // Ensure the response Content-Type is an image to prevent
+            // information disclosure from non-image responses being saved to disk.
+            $content_type = !empty($photo->headers['content-type']) ? $photo->headers['content-type'] : '';
+            if (!_hybridauth_picture_content_type_is_image($content_type)) {
+              watchdog('hybridauth', 'Picture URL did not return an image content type: @type', array('@type' => $content_type), WATCHDOG_WARNING);
             }
             else {
-              watchdog('hybridauth', 'Failed to save user image from url %url.', array('%url' => $photo_url), WATCHDOG_ERROR);
+              // Write to a temporary file and verify the content is a valid
+              // image via Backdrop's image toolkit before saving as a managed file.
+              $tmp_uri = 'temporary://hybridauth-picture-' . bin2hex(backdrop_random_bytes(8));
+              if (file_unmanaged_save_data($photo->data, $tmp_uri, FILE_EXISTS_REPLACE)) {
+                $image_info = image_get_info($tmp_uri);
+                file_unmanaged_delete($tmp_uri);
+                if (empty($image_info)) {
+                  watchdog('hybridauth', 'Picture URL content is not a valid image: %url', array('%url' => $photo_url), WATCHDOG_WARNING);
+                }
+                else {
+                  $extension = !empty($image_info['extension']) ? $image_info['extension'] : 'jpg';
+                  if ($file = file_save_data($photo->data, 'temporary://hybridauth-picture-' . $account->uid . '.' . $extension)) {
+                    // To make user_save() to process the file and move it.
+                    $file->status = 0;
+                    $edit['picture'] = $file;
+                    $user_save_trigger = TRUE;
+                  }
+                  else {
+                    watchdog('hybridauth', 'Failed to save user image from url %url.', array('%url' => $photo_url), WATCHDOG_ERROR);
+                  }
+                }
+              }
             }
           }
         }
@@ -899,4 +935,26 @@ function hybridauth_user_identity_delete_submit($form, &$form_state) {
   }
 
   $form_state['redirect'] = 'user/' . $account->uid . '/hybridauth';
+}
+
+/**
+ * Returns TRUE when the URL scheme is http or https.
+ *
+ * Extracted for unit-testability of the SSRF scheme check.
+ */
+function _hybridauth_picture_url_is_allowed($url) {
+  $parsed = parse_url($url);
+  if ($parsed === FALSE || empty($parsed['scheme'])) {
+    return FALSE;
+  }
+  return in_array(strtolower($parsed['scheme']), array('http', 'https'));
+}
+
+/**
+ * Returns TRUE when the Content-Type header indicates an image.
+ *
+ * Extracted for unit-testability of the content-type guard.
+ */
+function _hybridauth_picture_content_type_is_image($content_type) {
+  return (bool) preg_match('/^image\//i', $content_type);
 }

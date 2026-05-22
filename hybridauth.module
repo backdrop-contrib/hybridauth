@@ -929,7 +929,7 @@ function hybridauth_get_config() {
     $hybridauth_debug = config_get('hybridauth.settings', 'hybridauth_debug');
     if ($hybridauth_debug && file_put_contents($logfile, PHP_EOL . 'HYBRIDAUTH DEBUG LOG START' . PHP_EOL . PHP_EOL, FILE_APPEND) === FALSE) {
       watchdog('hybridauth', 'Failed to write to debug log file @logfile.', array('@logfile' => $logfile), WATCHDOG_ERROR);
-      $hybridauth_debug = FALSE;
+      $hybridauth_debug = 0;
     }
 
     $ha_config = array(
@@ -1078,7 +1078,7 @@ function _hybridauth_make_username($data, $allow_empty = FALSE) {
     $account = new stdClass();
     $account->data = array('hybridauth' => $data);
 
-    $hybridauth_name = trim(token_replace($pattern, array('user' => $account), array('clear' => TRUE, 'sanitize' => FALSE)));
+    $hybridauth_name = trim(token_replace($pattern, array('user' => $account), array('clear' => TRUE)));
   }
   else {
     $hybridauth_name = trim($data['username']);

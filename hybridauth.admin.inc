@@ -455,9 +455,6 @@ function hybridauth_admin_settings_validate($form, &$form_state) {
       $values['hybridauth_providers'][$provider_id] = $providers_values[$provider_id];
     }
   }
-
-  // Cast hybridauth_debug to boolean.
-  $values['hybridauth_debug'] = empty($values['hybridauth_debug']) ? FALSE : TRUE;
 }
 
 /**

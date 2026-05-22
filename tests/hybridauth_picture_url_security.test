@@ -1,0 +1,98 @@
+<?php
+/**
+ * @file
+ * Unit tests for HybridAuth picture URL security (SSRF / content validation).
+ */
+
+/**
+ * Unit tests for picture URL security logic introduced by the patch.
+ */
+class HybridAuthPictureSecurityTest extends BackdropUnitTestCase {
+
+  /**
+   *
+   */
+  public function setUp() {
+    parent::setUp();
+    module_load_include('inc', 'hybridauth', 'hybridauth.pages');
+  }
+
+  /** HTTP and HTTPS URLs must pass scheme validation. */
+  public function testAllowedUrlSchemes() {
+    $allowed = array(
+      'http://example.com/photo.jpg',
+      'https://example.com/photo.jpg',
+      'HTTP://example.com/photo.jpg',
+      'HTTPS://EXAMPLE.COM/avatar.png',
+      'https://cdn.example.com/path/to/image.gif?v=2',
+    );
+    foreach ($allowed as $url) {
+      $this->assertTrue(
+        _hybridauth_picture_url_is_allowed($url),
+        format_string('URL "@url" should pass scheme validation.', array('@url' => $url))
+      );
+    }
+  }
+
+  /** Non-HTTP(S) schemes and malformed URLs must be rejected. */
+  public function testBlockedUrlSchemes() {
+    $blocked = array(
+      'file:///etc/passwd'        => 'file://',
+      'ftp://example.com/img.png' => 'ftp://',
+      'gopher://example.com/'     => 'gopher://',
+      'data:image/png;base64,abc' => 'data:',
+      'javascript:alert(1)'       => 'javascript:',
+      'ssh://example.com/'        => 'ssh://',
+      '//example.com/photo.jpg'   => 'scheme-relative',
+      ''                          => 'empty string',
+      'not-a-url'                 => 'no scheme',
+      '/relative/path.jpg'        => 'relative path',
+    );
+    foreach ($blocked as $url => $label) {
+      $this->assertFalse(
+        _hybridauth_picture_url_is_allowed($url),
+        format_string('"@label" (@url) should fail scheme validation.', array('@label' => $label, '@url' => $url))
+      );
+    }
+  }
+
+  /** Content-Type headers starting with "image/" must be accepted. */
+  public function testAcceptedContentTypes() {
+    $accepted = array(
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'image/bmp',
+      'image/svg+xml',
+      'Image/JPEG',
+      'IMAGE/PNG',
+      'image/jpeg; charset=binary',
+    );
+    foreach ($accepted as $type) {
+      $this->assertTrue(
+        _hybridauth_picture_content_type_is_image($type),
+        format_string('Content-Type "@type" should be accepted.', array('@type' => $type))
+      );
+    }
+  }
+
+  /** Non-image Content-Type headers must be rejected. */
+  public function testRejectedContentTypes() {
+    $rejected = array(
+      'text/html',
+      'text/plain',
+      'application/json',
+      'application/octet-stream',
+      'application/xml',
+      'multipart/form-data',
+      '',
+    );
+    foreach ($rejected as $type) {
+      $this->assertFalse(
+        _hybridauth_picture_content_type_is_image($type),
+        format_string('Content-Type "@type" should be rejected.', array('@type' => $type))
+      );
+    }
+  }
+}

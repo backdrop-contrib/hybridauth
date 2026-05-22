@@ -36,7 +36,7 @@
     "hybridauth_destination_error": "",
     "hybridauth_duplicate_emails": 1,
     "hybridauth_proxy": "",
-    "hybridauth_debug": false,
+    "hybridauth_debug": 0,
     "vtabs__active_tab": "",
     "hybridauth_providers": {
     }

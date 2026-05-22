@@ -1,0 +1,5 @@
+[HybridAuthPictureSecurityTest]
+name = HybridAuth picture URL security test
+description = Validates URL scheme whitelist and Content-Type guard from the SSRF-hardening patch.
+group = HybridAuth
+file = hybridauth_picture_url_security.test

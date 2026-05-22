@@ -294,9 +294,15 @@ function _hybridauth_window_process_auth($data) {
   }
   // Create new user account.
   else {
+    $core_registration = config_get('system.core', 'user_register');
+    $hybridauth_registration = $config->get('hybridauth_register');
     // Visitors can create accounts.
-    if (($config->get('hybridauth_register') == 'core' && config_get('system.core', 'user_register') != USER_REGISTER_ADMINISTRATORS_ONLY)
-       || $config->get('hybridauth_register') == USER_REGISTER_VISITORS || $config->get('hybridauth_register') == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL) {
+    $visitor_reg_allowed = [
+      USER_REGISTER_VISITORS,
+      USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL,
+    ];
+    if (($hybridauth_registration == 'core' && in_array($core_registration, $visitor_reg_allowed))
+       || in_array($hybridauth_registration, $visitor_reg_allowed)) {
       _hybridauth_invoke_hooks('hybridauth_user_preinsert', $user, $data);
       $account = entity_create('user', array('is_new' => TRUE));
 
@@ -446,20 +452,16 @@ function _hybridauth_window_process_auth($data) {
         _hybridauth_invoke_hooks('hybridauth_user_login', $user, $data);
       }
     }
-    // Visitors can't register accounts through HybridAuth.
-    elseif ($config->get('hybridauth_register') == USER_REGISTER_ADMINISTRATORS_ONLY) {
-      if (config_get('system.core', 'user_register') != USER_REGISTER_ADMINISTRATORS_ONLY) {
+    else {
+      if ($hybridauth_registration == USER_REGISTER_ADMINISTRATORS_ONLY && $core_registration != USER_REGISTER_ADMINISTRATORS_ONLY) {
+        // Visitors can't register accounts through HybridAuth.
         $message = t('Sorry, you are not allowed to create an account this way. Please, <a href="@register">create a new account here first</a>.', array('@register' => url('user/register')));
       }
       else {
+        // Only admin can create accounts.
         $message = t('Sorry, new account registration is not allowed. If you have an account with a different email address or provider, please try to login using that account.');
       }
       backdrop_set_message($message, 'error');
-      _hybridauth_window_close(FALSE);
-    }
-    // Only admin can create accounts.
-    else {
-      backdrop_set_message(t('Only site administrators can create new user accounts.'), 'error');
       _hybridauth_window_close(FALSE);
     }
   }
